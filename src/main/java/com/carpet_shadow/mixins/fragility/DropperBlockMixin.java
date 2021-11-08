@@ -12,10 +12,19 @@ import org.spongepowered.asm.mixin.injection.Slice;
 @Mixin(DropperBlock.class)
 public abstract class DropperBlockMixin {
 
-    @Redirect(method = "dispense", at=@At(value = "INVOKE",target = "Lnet/minecraft/item/ItemStack;copy()Lnet/minecraft/item/ItemStack;"),
+    @Redirect(method = "dispense", at=@At(value = "INVOKE",target = "Lnet/minecraft/item/ItemStack;copy()Lnet/minecraft/item/ItemStack;",ordinal = 0),
     slice = @Slice(from=@At(value = "INVOKE",target = "Lnet/minecraft/block/entity/HopperBlockEntity;transfer(Lnet/minecraft/inventory/Inventory;Lnet/minecraft/inventory/Inventory;Lnet/minecraft/item/ItemStack;Lnet/minecraft/util/math/Direction;)Lnet/minecraft/item/ItemStack;")))
-    public ItemStack fix_dispense(ItemStack instance){
-        if(CarpetShadowSettings.shadowItemFragilityFix && ((ShadowItem)(Object)instance).getShadowId()!=null){
+    public ItemStack fix_dispense1(ItemStack instance){
+        if(CarpetShadowSettings.shadowItemFragilityFixes && ((ShadowItem)(Object)instance).getShadowId()!=null){
+            return instance;
+        }
+        return instance.copy();
+    }
+
+    @Redirect(method = "dispense", at=@At(value = "INVOKE",target = "Lnet/minecraft/item/ItemStack;copy()Lnet/minecraft/item/ItemStack;",ordinal = 1),
+    slice = @Slice(from=@At(value = "INVOKE",target = "Lnet/minecraft/block/entity/HopperBlockEntity;transfer(Lnet/minecraft/inventory/Inventory;Lnet/minecraft/inventory/Inventory;Lnet/minecraft/item/ItemStack;Lnet/minecraft/util/math/Direction;)Lnet/minecraft/item/ItemStack;")))
+    public ItemStack fix_dispense2(ItemStack instance){
+        if(CarpetShadowSettings.shadowItemFragilityFixes && ((ShadowItem)(Object)instance).getShadowId()!=null){
             instance.increment(1);
             return instance;
         }

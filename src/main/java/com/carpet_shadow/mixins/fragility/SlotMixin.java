@@ -22,7 +22,7 @@ public abstract class SlotMixin {
 
     @Redirect(method = "tryTakeStackRange", at=@At(value = "INVOKE",target = "Lnet/minecraft/screen/slot/Slot;takeStack(I)Lnet/minecraft/item/ItemStack;"))
     public ItemStack fixFragility_tryTakeStackRange(Slot instance, int amount){
-        if(CarpetShadowSettings.shadowItemFragilityFix && ((ShadowItem)(Object)this.getStack()).getShadowId()!=null &&
+        if(CarpetShadowSettings.shadowItemFragilityFixes && ((ShadowItem)(Object)this.getStack()).getShadowId()!=null &&
                 amount == this.getStack().getCount()){
             ItemStack ret = this.getStack();
             ItemStack res = ret.copy();
@@ -36,7 +36,7 @@ public abstract class SlotMixin {
     @Inject(method = "insertStack(Lnet/minecraft/item/ItemStack;I)Lnet/minecraft/item/ItemStack;",
             at=@At(value = "INVOKE",target = "Lnet/minecraft/item/ItemStack;split(I)Lnet/minecraft/item/ItemStack;"), cancellable = true)
     public void fixFragility_insertStack(ItemStack stack, int count, CallbackInfoReturnable<ItemStack> cir){
-        if(CarpetShadowSettings.shadowItemFragilityFix && ((ShadowItem)(Object)stack).getShadowId()!=null &&
+        if(CarpetShadowSettings.shadowItemFragilityFixes && ((ShadowItem)(Object)stack).getShadowId()!=null &&
                 count == stack.getCount()){
             this.setStack(stack);
             ItemStack ret = stack.copy();

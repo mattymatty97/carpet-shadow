@@ -17,7 +17,7 @@ public class CarpetShadowSettings {
     @Rule(desc = "Show Shadow Items Id in Item Names", category = { SHADOW, EXPERIMENTAL })
     public static boolean shadowItemTooltip = false;
     @Rule(desc = "Prevent Unlinking Shadow Items on base inventory movements", category = { SHADOW, EXPERIMENTAL})
-    public static boolean shadowItemFragilityFix = false;
+    public static boolean shadowItemFragilityFixes = false;
     @Rule(desc = "Prevent Merging Shadow Items instances on base inventory movements", category = { SHADOW, EXPERIMENTAL})
     public static boolean shadowItemPreventCombine = false;
 

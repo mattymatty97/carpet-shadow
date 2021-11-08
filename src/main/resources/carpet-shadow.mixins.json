@@ -4,18 +4,21 @@
   "package": "com.carpet_shadow.mixins",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "fragility.CreativeInventoryActionC2SPacketMixin",
     "fragility.DropperBlockMixin",
     "fragility.HopperBlockEntityMixin",
+    "fragility.ItemEntityMixin",
+    "fragility.ItemStackMixin",
+    "fragility.PlayerInventoryMixin",
     "fragility.SlotMixin",
-    "general.ItemEntityMixin",
     "general.ItemStackMixin",
     "general.ScreenHandlerMixin",
     "persistence.ItemStackMixin",
-    "tooltip.InventoryS2CPacketMixin",
+    "general.InventoryS2CPacketMixin",
     "tooltip.ItemStackMixin",
     "tooltip.PacketByteBufMixin",
     "tooltip.ScreenHandlerMixin",
-    "tooltip.ScreenHandlerSlotUpdateS2CPacketMixin"
+    "general.ScreenHandlerSlotUpdateS2CPacketMixin"
   ],
   "client": [
   ],

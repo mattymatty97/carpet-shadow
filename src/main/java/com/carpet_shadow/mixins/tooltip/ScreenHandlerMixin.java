@@ -25,7 +25,6 @@ public abstract class ScreenHandlerMixin {
     @Shadow
     protected abstract void checkSlotUpdates(int slot, ItemStack stack, Supplier<ItemStack> copySupplier);
 
-
     @Shadow protected abstract boolean insertItem(ItemStack stack, int startIndex, int endIndex, boolean fromLast);
 
     @Redirect(method = "sendContentUpdates", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;updateTrackedSlot(ILnet/minecraft/item/ItemStack;Ljava/util/function/Supplier;)V", ordinal = 0))
