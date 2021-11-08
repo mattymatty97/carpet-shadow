@@ -1,0 +1,27 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.carpet_shadow.mixins",
+  "compatibilityLevel": "JAVA_16",
+  "mixins": [
+    "fragility.DropperBlockMixin",
+    "fragility.HopperBlockEntityMixin",
+    "fragility.SlotMixin",
+    "general.ItemEntityMixin",
+    "general.ItemStackMixin",
+    "general.ScreenHandlerMixin",
+    "persistence.ItemStackMixin",
+    "tooltip.InventoryS2CPacketMixin",
+    "tooltip.ItemStackMixin",
+    "tooltip.PacketByteBufMixin",
+    "tooltip.ScreenHandlerMixin",
+    "tooltip.ScreenHandlerSlotUpdateS2CPacketMixin"
+  ],
+  "client": [
+  ],
+  "server": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
