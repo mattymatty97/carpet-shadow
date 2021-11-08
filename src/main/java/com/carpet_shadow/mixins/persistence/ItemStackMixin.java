@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 
 @Mixin(ItemStack.class)
@@ -18,7 +19,7 @@ public abstract class ItemStackMixin {
     private static void pre_fromNbt(NbtCompound nbt, CallbackInfoReturnable<ItemStack> cir){
         if(CarpetShadowSettings.shadowItemPersistence && nbt.contains("shadow")) {
             String shadow_id = nbt.getString("shadow");
-            WeakReference<ItemStack> reference = CarpetShadow.shadowMap.get(shadow_id);
+            Reference<ItemStack> reference = CarpetShadow.shadowMap.get(shadow_id);
             if (reference != null && !reference.refersTo(null)) {
                 CarpetShadow.LOGGER.debug("Shadowed item restored");
                 CarpetShadow.LOGGER.debug("id: " + shadow_id);
@@ -32,7 +33,7 @@ public abstract class ItemStackMixin {
     private static void post_fromNbt(NbtCompound nbt, CallbackInfoReturnable<ItemStack> cir){
         if(CarpetShadowSettings.shadowItemPersistence && nbt.contains("shadow")) {
             String shadow_id = nbt.getString("shadow");
-            WeakReference<ItemStack> reference = CarpetShadow.shadowMap.get(shadow_id);
+            Reference<ItemStack> reference = CarpetShadow.shadowMap.get(shadow_id);
             if (reference == null || reference.refersTo(null)) {
                 ItemStack stack = cir.getReturnValue();
                 CarpetShadow.shadowMap.put(shadow_id,new WeakReference<>(stack));
@@ -49,8 +50,9 @@ public abstract class ItemStackMixin {
             NbtCompound ret = cir.getReturnValue();
             ItemStack stack = ((ItemStack) (Object) this);
             String shadow_id = ((ShadowItem) (Object) stack).getShadowId();
-            if (shadow_id != null)
-                if ( CarpetShadow.shadowMap.get(shadow_id).refersTo(stack)) {
+            if (shadow_id != null) {
+                Reference<ItemStack> reference = CarpetShadow.shadowMap.get(shadow_id);
+                if ( reference!= null && reference.refersTo(stack)){
                     if (stack.isEmpty()) {
                         CarpetShadow.shadowMap.remove(shadow_id);
                     } else {
@@ -59,9 +61,10 @@ public abstract class ItemStackMixin {
                         CarpetShadow.LOGGER.debug("Shadowed item saved in memory");
                         CarpetShadow.LOGGER.debug("id: " + shadow_id);
                     }
-                }else {
+                }else{
                     ((ShadowItem) (Object) stack).setShadowId(null);
                 }
+            }
         }
     }
 }

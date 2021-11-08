@@ -9,6 +9,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
+
 @Mixin(InventoryS2CPacket.class)
 public abstract class InventoryS2CPacketMixin {
 
@@ -17,9 +20,10 @@ public abstract class InventoryS2CPacketMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;copy()Lnet/minecraft/item/ItemStack;"))
     public ItemStack copy_redirect(ItemStack instance){
         if(CarpetShadowSettings.shadowItemFragilityFixes && ((ShadowItem)(Object)instance).getShadowId()!=null){
-            ItemStack reference = CarpetShadow.shadowMap.get(((ShadowItem)(Object)instance).getShadowId()).get();
-            if (reference!=null)
-                return reference;
+            Reference<ItemStack> reference = CarpetShadow.shadowMap.get(((ShadowItem)(Object)instance).getShadowId());
+            if (reference!=null && !reference.refersTo(null)) {
+                return reference.get();
+            }
         }
         if(CarpetShadowSettings.shadowItemTooltip){
             return ShadowItem.copy_redirect(instance);
