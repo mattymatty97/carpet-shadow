@@ -14,23 +14,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Slot.class)
 public abstract class SlotMixin {
 
-    @Shadow public abstract ItemStack getStack();
-
-    @Shadow public abstract ItemStack takeStack(int amount);
-
     @Shadow public abstract void setStack(ItemStack stack);
 
     @Redirect(method = "tryTakeStackRange", at=@At(value = "INVOKE",target = "Lnet/minecraft/screen/slot/Slot;takeStack(I)Lnet/minecraft/item/ItemStack;"))
     public ItemStack fixFragility_tryTakeStackRange(Slot instance, int amount){
-        if(CarpetShadowSettings.shadowItemFragilityFixes && ((ShadowItem)(Object)this.getStack()).getShadowId()!=null &&
-                amount == this.getStack().getCount()){
-            ItemStack ret = this.getStack();
+        if(CarpetShadowSettings.shadowItemFragilityFixes && ((ShadowItem)(Object)instance.getStack()).getShadowId()!=null &&
+                amount == instance.getStack().getCount()){
+            ItemStack ret = instance.getStack();
             ItemStack res = ret.copy();
             res.setCount(0);
-            this.setStack(res);
+            instance.setStack(res);
             return ret;
         }
-        return takeStack(amount);
+        return instance.takeStack(amount);
     }
 
     @Inject(method = "insertStack(Lnet/minecraft/item/ItemStack;I)Lnet/minecraft/item/ItemStack;",

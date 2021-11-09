@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
 }
 
-version = project.mod_version
+version = project.mod_version + project.mod_suffix
 group = project.maven_group
 
 repositories {
@@ -92,3 +92,48 @@ publishing {
         // retrieving dependencies.
     }
 }
+
+def buildnumber = 1
+
+tasks.register("updateBuildNumber") {
+    doLast {
+        Properties props = new Properties()
+
+        File propsFile = new File('build.properties')
+
+        props.load(propsFile.newDataInputStream())
+
+        String prevVersion = (props.getProperty('mod_version'))
+
+        if (prevVersion.equals(project.mod_version)) {
+
+            buildnumber = (((props.getProperty('mod_buildnumber')) as Integer) + 1)
+
+        }
+
+        props.setProperty('mod_buildnumber', buildnumber.toString())
+        props.setProperty('mod_version', project.mod_version.toString())
+
+        props.store(propsFile.newWriter(), null)
+
+        props.load(propsFile.newDataInputStream())
+
+    }
+    outputs.upToDateWhen { false }
+}
+
+tasks.register("FinalizeBuild", Copy){
+    from "$buildDir/libs"
+    into "output/libs"
+    include "${project.archives_base_name}-${project.version}.jar"
+    rename { String filename ->
+        return "${project.archives_base_name}-${project.version} build ${buildnumber}.jar"
+    }
+    doLast {
+        mkdir "output/libs"
+    }
+}
+
+tasks.build.finalizedBy updateBuildNumber
+tasks.updateBuildNumber.shouldRunAfter build
+tasks.updateBuildNumber.finalizedBy FinalizeBuild

@@ -1,4 +1,4 @@
-package com.carpet_shadow.mixins.general;
+package com.carpet_shadow.mixins.tooltip;
 
 import com.carpet_shadow.CarpetShadow;
 import com.carpet_shadow.CarpetShadowSettings;
@@ -19,12 +19,6 @@ public abstract class InventoryS2CPacketMixin {
     @Redirect(method = "<init>(IILnet/minecraft/util/collection/DefaultedList;Lnet/minecraft/item/ItemStack;)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;copy()Lnet/minecraft/item/ItemStack;"))
     public ItemStack copy_redirect(ItemStack instance){
-        if(CarpetShadowSettings.shadowItemFragilityFixes && ((ShadowItem)(Object)instance).getShadowId()!=null){
-            Reference<ItemStack> reference = CarpetShadow.shadowMap.get(((ShadowItem)(Object)instance).getShadowId());
-            if (reference!=null && !reference.refersTo(null)) {
-                return reference.get();
-            }
-        }
         if(CarpetShadowSettings.shadowItemTooltip){
             return ShadowItem.copy_redirect(instance);
         }
