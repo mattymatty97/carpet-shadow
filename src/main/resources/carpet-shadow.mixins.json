@@ -9,6 +9,7 @@
     "fragility.ItemEntityMixin",
     "fragility.ItemStackMixin",
     "fragility.PlayerInventoryMixin",
+    "fragility.ScreenHandlerMixin",
     "fragility.SlotMixin",
     "general.ItemStackMixin",
     "general.ScreenHandlerMixin",

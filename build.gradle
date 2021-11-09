@@ -131,7 +131,10 @@ tasks.register("FinalizeBuild", Copy){
     }
     doLast {
         mkdir "output/libs"
+        println "Output File:"
+        println "${project.archives_base_name}-${project.version} build ${buildnumber}.jar"
     }
+    outputs.upToDateWhen { false }
 }
 
 tasks.build.finalizedBy updateBuildNumber

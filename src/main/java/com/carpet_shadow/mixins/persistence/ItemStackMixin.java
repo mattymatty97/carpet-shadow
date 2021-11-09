@@ -2,6 +2,7 @@ package com.carpet_shadow.mixins.persistence;
 
 import com.carpet_shadow.CarpetShadow;
 import com.carpet_shadow.CarpetShadowSettings;
+import com.carpet_shadow.Globals;
 import com.carpet_shadow.interfaces.ShadowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -19,11 +20,11 @@ public abstract class ItemStackMixin {
     private static void pre_fromNbt(NbtCompound nbt, CallbackInfoReturnable<ItemStack> cir){
         if(CarpetShadowSettings.shadowItemPersistence && nbt.contains("shadow")) {
             String shadow_id = nbt.getString("shadow");
-            Reference<ItemStack> reference = CarpetShadow.shadowMap.get(shadow_id);
-            if (reference != null && !reference.refersTo(null)) {
+            ItemStack reference = Globals.getByIdOrNull(shadow_id);
+            if (reference != null) {
                 CarpetShadow.LOGGER.debug("Shadowed item restored");
                 CarpetShadow.LOGGER.debug("id: " + shadow_id);
-                cir.setReturnValue(reference.get());
+                cir.setReturnValue(reference);
                 cir.cancel();
             }
         }
@@ -33,8 +34,8 @@ public abstract class ItemStackMixin {
     private static void post_fromNbt(NbtCompound nbt, CallbackInfoReturnable<ItemStack> cir){
         if(CarpetShadowSettings.shadowItemPersistence && nbt.contains("shadow")) {
             String shadow_id = nbt.getString("shadow");
-            Reference<ItemStack> reference = CarpetShadow.shadowMap.get(shadow_id);
-            if (reference == null || reference.refersTo(null)) {
+            ItemStack reference = Globals.getByIdOrNull(shadow_id);
+            if (reference == null) {
                 ItemStack stack = cir.getReturnValue();
                 CarpetShadow.shadowMap.put(shadow_id,new WeakReference<>(stack));
                 ((ShadowItem) (Object) stack).setShadowId(shadow_id);
