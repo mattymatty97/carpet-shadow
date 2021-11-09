@@ -10,9 +10,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ScreenHandlerSlotUpdateS2CPacket.class)
 public abstract class ScreenHandlerSlotUpdateS2CPacketMixin {
-    @Redirect(method ="<init>(IIILnet/minecraft/item/ItemStack;)V", at=@At(value = "INVOKE",target = "Lnet/minecraft/item/ItemStack;copy()Lnet/minecraft/item/ItemStack;"))
-    public ItemStack copy_redirect(ItemStack instance){
-        if(CarpetShadowSettings.shadowItemTooltip ){
+    @Redirect(method = "<init>(IIILnet/minecraft/item/ItemStack;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;copy()Lnet/minecraft/item/ItemStack;"))
+    public ItemStack copy_redirect(ItemStack instance) {
+        if (CarpetShadowSettings.shadowItemTooltip) {
             return ShadowItem.copy_redirect(instance);
         }
         return instance.copy();

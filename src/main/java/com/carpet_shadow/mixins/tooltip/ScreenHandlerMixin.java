@@ -22,24 +22,28 @@ public abstract class ScreenHandlerMixin {
 
     @Shadow
     protected abstract void updateTrackedSlot(int slot, ItemStack stack, Supplier<ItemStack> copySupplier);
+
     @Shadow
     protected abstract void checkSlotUpdates(int slot, ItemStack stack, Supplier<ItemStack> copySupplier);
 
-    @Shadow protected abstract boolean insertItem(ItemStack stack, int startIndex, int endIndex, boolean fromLast);
+    @Shadow
+    protected abstract boolean insertItem(ItemStack stack, int startIndex, int endIndex, boolean fromLast);
 
     @Redirect(method = "sendContentUpdates", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;updateTrackedSlot(ILnet/minecraft/item/ItemStack;Ljava/util/function/Supplier;)V", ordinal = 0))
     public void updateTrackedSlot_redirect(ScreenHandler instance, int slot, ItemStack stack, Supplier<ItemStack> copySupplier) {
-        Supplier<ItemStack> new_supplier = Suppliers.memoize(()->ShadowItem.copy_redirect(stack));
+        Supplier<ItemStack> new_supplier = Suppliers.memoize(() -> ShadowItem.copy_redirect(stack));
         this.updateTrackedSlot(slot, stack, new_supplier);
     }
+
     @Redirect(method = "sendContentUpdates", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;checkSlotUpdates(ILnet/minecraft/item/ItemStack;Ljava/util/function/Supplier;)V", ordinal = 0))
     public void checkSlotUpdates_redirect(ScreenHandler instance, int slot, ItemStack stack, Supplier<ItemStack> copySupplier) {
-        Supplier<ItemStack> new_supplier = Suppliers.memoize(()->ShadowItem.copy_redirect(stack));
+        Supplier<ItemStack> new_supplier = Suppliers.memoize(() -> ShadowItem.copy_redirect(stack));
         this.checkSlotUpdates(slot, stack, new_supplier);
     }
+
     @Redirect(method = "updateToClient", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;updateTrackedSlot(ILnet/minecraft/item/ItemStack;Ljava/util/function/Supplier;)V", ordinal = 0))
     public void updateTrackedSlot_redirect2(ScreenHandler instance, int slot, ItemStack stack, Supplier<ItemStack> copySupplier) {
-        Supplier<ItemStack> new_supplier = Suppliers.memoize(()->ShadowItem.copy_redirect(stack));
+        Supplier<ItemStack> new_supplier = Suppliers.memoize(() -> ShadowItem.copy_redirect(stack));
         this.updateTrackedSlot(slot, stack, new_supplier);
     }
 

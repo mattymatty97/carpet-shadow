@@ -16,34 +16,35 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ItemEntity.class)
-public abstract class ItemEntityMixin{
+public abstract class ItemEntityMixin {
 
-    @Shadow public abstract ItemStack getStack();
-
-    @Redirect(method = "onPlayerCollision", at=@At(value = "INVOKE",target = "Lnet/minecraft/entity/ItemEntity;getStack()Lnet/minecraft/item/ItemStack;"))
-    public ItemStack getEntityStack(ItemEntity instance){
-        ItemStack stack = instance.getStack();
-        ((ItemEntitySlot)(Object)stack).setEntity(instance);
-        return stack;
-    }
-
-    @Inject(method = "onPlayerCollision", at=@At(value = "RETURN"))
-    public void getEntityStack(PlayerEntity player, CallbackInfo ci){
-        ItemStack stack = this.getStack();
-        ((ItemEntitySlot)(Object)stack).setEntity(null);
-    }
-
-    @Redirect(method = "merge(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;I)Lnet/minecraft/item/ItemStack;",at=@At(value = "INVOKE",target = "Lnet/minecraft/item/ItemStack;copy()Lnet/minecraft/item/ItemStack;"))
-    private static ItemStack redirect_copy(ItemStack stack){
-        if(CarpetShadowSettings.shadowItemFragilityFixes && ((ShadowItem)(Object)stack).getShadowId()!=null){
+    @Redirect(method = "merge(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;I)Lnet/minecraft/item/ItemStack;", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;copy()Lnet/minecraft/item/ItemStack;"))
+    private static ItemStack redirect_copy(ItemStack stack) {
+        if (CarpetShadowSettings.shadowItemFragilityFixes && ((ShadowItem) (Object) stack).getShadowId() != null) {
             return stack;
         }
         return stack.copy();
     }
 
-    @Inject(method = "canMerge(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Z", at=@At("RETURN"), cancellable = true)
-    private static void canMerge(ItemStack stack1, ItemStack stack2, CallbackInfoReturnable<Boolean> cir){
+    @Inject(method = "canMerge(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Z", at = @At("RETURN"), cancellable = true)
+    private static void canMerge(ItemStack stack1, ItemStack stack2, CallbackInfoReturnable<Boolean> cir) {
         Globals.shadow_merge_check(stack1, stack2, cir);
+    }
+
+    @Shadow
+    public abstract ItemStack getStack();
+
+    @Redirect(method = "onPlayerCollision", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ItemEntity;getStack()Lnet/minecraft/item/ItemStack;"))
+    public ItemStack getEntityStack(ItemEntity instance) {
+        ItemStack stack = instance.getStack();
+        ((ItemEntitySlot) (Object) stack).setEntity(instance);
+        return stack;
+    }
+
+    @Inject(method = "onPlayerCollision", at = @At(value = "RETURN"))
+    public void getEntityStack(PlayerEntity player, CallbackInfo ci) {
+        ItemStack stack = this.getStack();
+        ((ItemEntitySlot) (Object) stack).setEntity(null);
     }
 
 }

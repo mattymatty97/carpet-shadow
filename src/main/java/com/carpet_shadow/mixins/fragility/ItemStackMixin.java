@@ -18,6 +18,11 @@ public abstract class ItemStackMixin implements ItemEntitySlot {
 
     private ItemEntity entity = null;
 
+    @Inject(method = "canCombine", at = @At("RETURN"), cancellable = true)
+    private static void check_combine(ItemStack stack, ItemStack otherStack, CallbackInfoReturnable<Boolean> cir) {
+        Globals.shadow_merge_check(stack, otherStack, cir);
+    }
+
     @Override
     public ItemEntity getEntity() {
         return entity;
@@ -28,19 +33,14 @@ public abstract class ItemStackMixin implements ItemEntitySlot {
         this.entity = entity;
     }
 
-    @Inject(method = "canCombine", at=@At("RETURN"), cancellable = true)
-    private static void check_combine(ItemStack stack, ItemStack otherStack, CallbackInfoReturnable<Boolean> cir){
-        Globals.shadow_merge_check(stack, otherStack, cir);
-    }
-
-    @Inject(method = "isItemEqualIgnoreDamage", at=@At("RETURN"), cancellable = true)
-    private void check_EqualIgnoreDamage(ItemStack stack, CallbackInfoReturnable<Boolean> cir){
+    @Inject(method = "isItemEqualIgnoreDamage", at = @At("RETURN"), cancellable = true)
+    private void check_EqualIgnoreDamage(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
         Globals.shadow_merge_check(stack, (ItemStack) (Object) this, cir);
     }
 
-    @Inject(method = "isEqual", at=@At("RETURN"), cancellable = true)
-    private void check_Equal(ItemStack stack, CallbackInfoReturnable<Boolean> cir){
-        if(CarpetShadowSettings.shadowItemFragilityFixes && cir.getReturnValue()) {
+    @Inject(method = "isEqual", at = @At("RETURN"), cancellable = true)
+    private void check_Equal(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+        if (CarpetShadowSettings.shadowItemFragilityFixes && cir.getReturnValue()) {
             String shadow1 = ((ShadowItem) (Object) stack).getShadowId();
             String shadow2 = ((ShadowItem) (Object) this).getShadowId();
             if (!Objects.equals(shadow1, shadow2)) {

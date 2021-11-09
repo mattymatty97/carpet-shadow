@@ -14,12 +14,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Slot.class)
 public abstract class SlotMixin {
 
-    @Shadow public abstract void setStack(ItemStack stack);
+    @Shadow
+    public abstract void setStack(ItemStack stack);
 
-    @Redirect(method = "tryTakeStackRange", at=@At(value = "INVOKE",target = "Lnet/minecraft/screen/slot/Slot;takeStack(I)Lnet/minecraft/item/ItemStack;"))
-    public ItemStack fixFragility_tryTakeStackRange(Slot instance, int amount){
-        if(CarpetShadowSettings.shadowItemFragilityFixes && ((ShadowItem)(Object)instance.getStack()).getShadowId()!=null &&
-                amount == instance.getStack().getCount()){
+    @Redirect(method = "tryTakeStackRange", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;takeStack(I)Lnet/minecraft/item/ItemStack;"))
+    public ItemStack fixFragility_tryTakeStackRange(Slot instance, int amount) {
+        if (CarpetShadowSettings.shadowItemFragilityFixes && ((ShadowItem) (Object) instance.getStack()).getShadowId() != null &&
+                amount == instance.getStack().getCount()) {
             ItemStack ret = instance.getStack();
             ItemStack res = ret.copy();
             res.setCount(0);
@@ -30,10 +31,10 @@ public abstract class SlotMixin {
     }
 
     @Inject(method = "insertStack(Lnet/minecraft/item/ItemStack;I)Lnet/minecraft/item/ItemStack;",
-            at=@At(value = "INVOKE",target = "Lnet/minecraft/item/ItemStack;split(I)Lnet/minecraft/item/ItemStack;"), cancellable = true)
-    public void fixFragility_insertStack(ItemStack stack, int count, CallbackInfoReturnable<ItemStack> cir){
-        if(CarpetShadowSettings.shadowItemFragilityFixes && ((ShadowItem)(Object)stack).getShadowId()!=null &&
-                count == stack.getCount()){
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;split(I)Lnet/minecraft/item/ItemStack;"), cancellable = true)
+    public void fixFragility_insertStack(ItemStack stack, int count, CallbackInfoReturnable<ItemStack> cir) {
+        if (CarpetShadowSettings.shadowItemFragilityFixes && ((ShadowItem) (Object) stack).getShadowId() != null &&
+                count == stack.getCount()) {
             this.setStack(stack);
             ItemStack ret = stack.copy();
             ret.setCount(0);

@@ -21,11 +21,11 @@ import java.util.List;
 public abstract class ItemStackMixin {
 
     @Inject(method = "getTooltip", at = @At("RETURN"))
-    private void postToolTip(@Nullable PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> cir){
+    private void postToolTip(@Nullable PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> cir) {
         List<Text> list = cir.getReturnValue();
-        if (CarpetShadowSettings.shadowItemTooltip && ((ShadowItem) (Object) this).getShadowId() != null){
+        if (CarpetShadowSettings.shadowItemTooltip && ((ShadowItem) (Object) this).getShadowId() != null) {
             LiteralText text = new LiteralText("shadow_id: ");
-            text.append(new LiteralText(((ShadowItem) (Object) this).getShadowId()).formatted(Formatting.GOLD,Formatting.BOLD));
+            text.append(new LiteralText(((ShadowItem) (Object) this).getShadowId()).formatted(Formatting.GOLD, Formatting.BOLD));
             text.formatted(Formatting.ITALIC);
             list.add(text);
         }

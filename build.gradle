@@ -122,7 +122,7 @@ tasks.register("updateBuildNumber") {
     outputs.upToDateWhen { false }
 }
 
-tasks.register("FinalizeBuild", Copy){
+tasks.register("FinalizeBuild", Copy) {
     from "$buildDir/libs"
     into "output/libs"
     include "${project.archives_base_name}-${project.version}.jar"
