@@ -24,7 +24,8 @@ carpet extension to fix various bugs related to shadow item stacks
  - **shadowItemIdSize**
 
     changes the length of the shadow stacks unique identifiers
-     **PS:** *do not edit unless you know what you're doing*
+    
+    **PS:** *do not edit unless you know what you're doing*
 
 ## Feature List
 
