@@ -4,19 +4,25 @@ carpet extension to fix various bugs related to shadow item stacks
 ## Carpet Settings
 
  - **shadowItemPersistence**
+
     prevents shadow item instances from unlinking/duping when saved to disk
     
-  - **shadowItemTooltip**
+ - **shadowItemTooltip**
+
     shows the shadow stack unique identifier when hoovering over a shadow stack with the mouse
     
  - **shadowItemFragilityFixes**
+
     various fixes to item related actions that might unlink/dupe/delete the shadow stacks
     
-  - **shadowItemPreventCombine**
+ - **shadowItemPreventCombine**
+
     by default same instances of the same shadow stack wont merge on inventory actions, this option overrides that behavior and prevents merging operations between any shadow stack.
+    
     **PS:** *this option only has effect if **shadowItemFragilityFixes** is active*
     
  - **shadowItemIdSize**
+
     changes the length of the shadow stacks unique identifiers
      **PS:** *do not edit unless you know what you're doing*
 
