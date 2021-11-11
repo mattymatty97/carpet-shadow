@@ -101,11 +101,18 @@ public abstract class ScreenHandlerMixin {
     }
 
     @Redirect(method = "internalOnSlotClick",
+            slice = @Slice(
+                    from = @At(value = "INVOKE",target = "Lnet/minecraft/util/collection/DefaultedList;get(I)Ljava/lang/Object;"),
+                    to = @At(value = "INVOKE",target = "Ljava/util/Set;add(Ljava/lang/Object;)Z")
+            ),
             at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;canInsertItemIntoSlot(Lnet/minecraft/screen/slot/Slot;Lnet/minecraft/item/ItemStack;Z)Z"))
     public boolean fixQuickCraft(Slot slot, ItemStack stack, boolean allowOverflow) {
-        if (CarpetShadowSettings.shadowItemFragilityFixes &&
-                (((ShadowItem) (Object) slot.getStack()).getShadowId() != null || ((ShadowItem) (Object) this.getCursorStack()).getShadowId() != null)) {
-            return false;
+        if (CarpetShadowSettings.shadowItemFragilityFixes) {
+            ItemStack slotStack = slot.getStack();
+            ItemStack ref1 = Globals.getByIdOrNull(((ShadowItem) (Object) slotStack).getShadowId());
+            ItemStack ref2 = Globals.getByIdOrNull(((ShadowItem) (Object) stack).getShadowId());
+            if(slotStack == ref1 || stack == ref2)
+                return false;
         }
         return canInsertItemIntoSlot(slot, stack, allowOverflow);
     }

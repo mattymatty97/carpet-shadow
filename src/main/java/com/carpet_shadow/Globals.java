@@ -10,6 +10,8 @@ import java.lang.ref.WeakReference;
 public class Globals {
 
     public static ItemStack getByIdOrNull(String shadow_id) {
+        if(shadow_id == null)
+            return null;
         Reference<ItemStack> reference = CarpetShadow.shadowMap.get(shadow_id);
         if (reference != null && !reference.refersTo(null)) {
             return reference.get();
