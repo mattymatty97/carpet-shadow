@@ -15,12 +15,6 @@ public class CarpetShadowSettings {
     public static boolean shadowItemPersistence = false;
     @Rule(desc = "Shadow Items Id Length", category = {SHADOW, EXPERIMENTAL}, validate = {IdSizeValidator.class})
     public static int shadowItemIdSize = 5;
-    @Rule(desc = "Show Shadow Items Id in Item Names", category = {SHADOW, EXPERIMENTAL})
-    public static boolean shadowItemTooltip = false;
-    @Rule(desc = "Prevent Unlinking Shadow Items on base inventory movements", category = {SHADOW, EXPERIMENTAL})
-    public static boolean shadowItemFragilityFixes = false;
-    @Rule(desc = "Prevent Merging Shadow Items instances on base inventory movements", category = {SHADOW, EXPERIMENTAL})
-    public static boolean shadowItemPreventCombine = false;
 
     private static class IdSizeValidator extends Validator<Integer> {
         @Override
