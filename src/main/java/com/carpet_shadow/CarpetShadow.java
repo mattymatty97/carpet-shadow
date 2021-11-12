@@ -3,6 +3,7 @@ package com.carpet_shadow;
 import carpet.CarpetExtension;
 import carpet.CarpetServer;
 import com.carpet_shadow.utility.RandomString;
+import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.item.ItemStack;
@@ -12,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 
-public class CarpetShadow implements CarpetExtension, ModInitializer {
+public class CarpetShadow implements CarpetExtension, ModInitializer, ClientModInitializer {
     public static final HashMap<String, WeakReference<ItemStack>> shadowMap = new HashMap<>();
     public static final Logger LOGGER = LogManager.getLogger("carpet-shadow");
     public static RandomString shadow_id_generator = new RandomString(CarpetShadowSettings.shadowItemIdSize);
@@ -26,6 +27,15 @@ public class CarpetShadow implements CarpetExtension, ModInitializer {
 
     @Override
     public void onInitialize() {
+        CarpetServer.manageExtension(new CarpetShadow());
+        LOGGER.info("Carpet Shadow Loading!");
+        ServerLifecycleEvents.SERVER_STOPPED.register((server -> {
+            shadowMap.clear();
+        }));
+    }
+
+    @Override
+    public void onInitializeClient() {
         CarpetServer.manageExtension(new CarpetShadow());
         LOGGER.info("Carpet Shadow Loading!");
         ServerLifecycleEvents.SERVER_STOPPED.register((server -> {

@@ -21,9 +21,9 @@ import java.lang.ref.WeakReference;
 public abstract class ScreenHandlerMixin {
 
     @Redirect(method = "method_30010",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;setStack(Lnet/minecraft/item/ItemStack;)V", ordinal = 0),
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;setStack(Lnet/minecraft/item/ItemStack;)V",ordinal = 2),
             slice = @Slice(
-                    from = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;getMaxItemCount(Lnet/minecraft/item/ItemStack;)I", ordinal = 3)),
+                    from = @At(value = "FIELD", target = "Lnet/minecraft/screen/slot/SlotActionType;SWAP:Lnet/minecraft/screen/slot/SlotActionType;")),
             require = 0)
     private void handle_shadowing(Slot instance, ItemStack stack) {
         try {
@@ -38,11 +38,29 @@ public abstract class ScreenHandlerMixin {
                 CarpetShadow.shadowMap.put(shadow_id, new WeakReference<>(stack));
                 ((ShadowItem) (Object) stack).setShadowId(shadow_id);
             }
-            if (CarpetShadowSettings.shadowItemPersistence) {
-                throw new ShadowingException();
-            } else {
-                throw error;
+            throw error;
+        }
+    }
+
+    @Redirect(method = "method_30010",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;setStack(Lnet/minecraft/item/ItemStack;)V",ordinal = 4),
+            slice = @Slice(
+                    from = @At(value = "FIELD", target = "Lnet/minecraft/screen/slot/SlotActionType;SWAP:Lnet/minecraft/screen/slot/SlotActionType;")),
+            require = 0)
+    private void handle_shadowing2(Slot instance, ItemStack stack) {
+        try {
+            instance.setStack(stack);
+        } catch (Throwable error) {
+            CarpetShadow.LOGGER.warn("New Shadow Item Created");
+            String shadow_id = ((ShadowItem) (Object) stack).getShadowId();
+            if (shadow_id == null) {
+                do {
+                    shadow_id = CarpetShadow.shadow_id_generator.nextString();
+                } while (CarpetShadow.shadowMap.containsKey(shadow_id));
+                CarpetShadow.shadowMap.put(shadow_id, new WeakReference<>(stack));
+                ((ShadowItem) (Object) stack).setShadowId(shadow_id);
             }
+            throw error;
         }
     }
 //
