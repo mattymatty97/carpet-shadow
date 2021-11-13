@@ -4,6 +4,7 @@ import com.carpet_shadow.CarpetShadowSettings;
 import com.carpet_shadow.Globals;
 import com.carpet_shadow.interfaces.ItemEntitySlot;
 import com.carpet_shadow.interfaces.ShadowItem;
+import com.carpet_shadow.interfaces.ShifingItem;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,9 +15,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Objects;
 
 @Mixin(ItemStack.class)
-public abstract class ItemStackMixin implements ItemEntitySlot {
+public abstract class ItemStackMixin implements ItemEntitySlot, ShifingItem {
 
+    boolean shiftMoving = false;
     private ItemEntity entity = null;
+
+    @Override
+    public boolean isShiftMoving() {
+        return shiftMoving;
+    }
+
+    @Override
+    public void setShiftMoving(boolean shiftMoving) {
+        this.shiftMoving = shiftMoving;
+    }
 
     @Inject(method = "canCombine", at = @At("RETURN"), cancellable = true)
     private static void check_combine(ItemStack stack, ItemStack otherStack, CallbackInfoReturnable<Boolean> cir) {

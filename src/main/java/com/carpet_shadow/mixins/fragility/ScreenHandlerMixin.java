@@ -3,6 +3,7 @@ package com.carpet_shadow.mixins.fragility;
 import com.carpet_shadow.CarpetShadowSettings;
 import com.carpet_shadow.Globals;
 import com.carpet_shadow.interfaces.ShadowItem;
+import com.carpet_shadow.interfaces.ShifingItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
@@ -11,8 +12,10 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Slice;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ScreenHandler.class)
 public abstract class ScreenHandlerMixin {
@@ -62,7 +65,9 @@ public abstract class ScreenHandlerMixin {
                 ItemStack mirror = og_item.copy();
                 ((ShadowItem) (Object) mirror).setShadowId(((ShadowItem) (Object) og_item).getShadowId());
                 og.setStack(mirror);
+                ((ShifingItem)(Object)mirror).setShiftMoving(true);
                 ItemStack ret = instance.transferSlot(player, index);
+                ((ShifingItem)(Object)mirror).setShiftMoving(false);
                 if (ret == ItemStack.EMPTY) {
                     og_item = Globals.getByIdOrAdd(((ShadowItem) (Object) og_item).getShadowId(), og_item);
                     og.setStack(og_item);
@@ -92,12 +97,12 @@ public abstract class ScreenHandlerMixin {
     }
 
     @Redirect(method = "insertItem",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isStackable()Z", ordinal = 0))
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isEmpty()Z",ordinal = 0))
     public boolean fix_shift2(ItemStack instance) {
-        if (CarpetShadowSettings.shadowItemFragilityFixes && ((ShadowItem) (Object) instance).getShadowId() != null) {
-            return false;
+        if (CarpetShadowSettings.shadowItemFragilityFixes && ((ShifingItem) (Object) instance).isShiftMoving()) {
+            return true;
         }
-        return instance.isStackable();
+        return instance.isEmpty();
     }
 
     @Redirect(method = "internalOnSlotClick",
