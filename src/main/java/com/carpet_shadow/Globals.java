@@ -13,7 +13,7 @@ public class Globals {
         if(shadow_id == null)
             return null;
         Reference<ItemStack> reference = CarpetShadow.shadowMap.get(shadow_id);
-        if (reference != null && !reference.refersTo(null)) {
+        if (reference != null && !(reference.get() == null)) {
             return reference.get();
         }
         return null;

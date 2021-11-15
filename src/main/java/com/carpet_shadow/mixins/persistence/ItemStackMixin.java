@@ -18,42 +18,45 @@ import java.lang.ref.WeakReference;
 public abstract class ItemStackMixin {
     @Inject(at = @At("HEAD"), method = "fromNbt", cancellable = true)
     private static void pre_fromNbt(NbtCompound nbt, CallbackInfoReturnable<ItemStack> cir) {
-        if (CarpetShadowSettings.shadowItemPersistence && nbt.contains("shadow")) {
+        if (CarpetShadowSettings.shadowItemMode.shouldLoadItem() && nbt.contains("shadow") && !CarpetShadowSettings.shadowItemMode.shouldResetCount()) {
             String shadow_id = nbt.getString("shadow");
             ItemStack reference = Globals.getByIdOrNull(shadow_id);
             if (reference != null) {
                 CarpetShadow.LOGGER.debug("Shadowed item restored");
                 CarpetShadow.LOGGER.debug("id: " + shadow_id);
                 cir.setReturnValue(reference);
-                cir.cancel();
             }
         }
     }
 
     @Inject(at = @At("RETURN"), method = "fromNbt")
     private static void post_fromNbt(NbtCompound nbt, CallbackInfoReturnable<ItemStack> cir) {
-        if (CarpetShadowSettings.shadowItemPersistence && nbt.contains("shadow")) {
-            String shadow_id = nbt.getString("shadow");
-            ItemStack reference = Globals.getByIdOrNull(shadow_id);
-            if (reference == null) {
-                ItemStack stack = cir.getReturnValue();
-                CarpetShadow.shadowMap.put(shadow_id, new WeakReference<>(stack));
-                ((ShadowItem) (Object) stack).setShadowId(shadow_id);
-                CarpetShadow.LOGGER.debug("Shadowed item loaded from memory");
-                CarpetShadow.LOGGER.debug("id: " + shadow_id);
+        if (nbt.contains("shadow")) {
+            if(CarpetShadowSettings.shadowItemMode.shouldResetCount()){
+                cir.getReturnValue().setCount(0);
+            }else if(CarpetShadowSettings.shadowItemMode.shouldLoadItem()){
+                String shadow_id = nbt.getString("shadow");
+                ItemStack reference = Globals.getByIdOrNull(shadow_id);
+                if (reference == null) {
+                    ItemStack stack = cir.getReturnValue();
+                    CarpetShadow.shadowMap.put(shadow_id, new WeakReference<>(stack));
+                    ((ShadowItem) (Object) stack).setShadowId(shadow_id);
+                    CarpetShadow.LOGGER.debug("Shadowed item loaded from memory");
+                    CarpetShadow.LOGGER.debug("id: " + shadow_id);
+                }
             }
         }
     }
 
     @Inject(at = @At("RETURN"), method = "writeNbt", cancellable = true)
     private void post_writeNbt(NbtCompound nbt, CallbackInfoReturnable<NbtCompound> cir) {
-        if (CarpetShadowSettings.shadowItemPersistence) {
+        if (CarpetShadowSettings.shadowItemMode.shouldWriteItem()) {
             NbtCompound ret = cir.getReturnValue();
             ItemStack stack = ((ItemStack) (Object) this);
             String shadow_id = ((ShadowItem) (Object) stack).getShadowId();
             if (shadow_id != null) {
                 Reference<ItemStack> reference = CarpetShadow.shadowMap.get(shadow_id);
-                if (reference != null && reference.refersTo(stack)) {
+                if (reference != null && (reference.get() == stack)) {
                     if (stack.isEmpty()) {
                         CarpetShadow.shadowMap.remove(shadow_id);
                     } else {
