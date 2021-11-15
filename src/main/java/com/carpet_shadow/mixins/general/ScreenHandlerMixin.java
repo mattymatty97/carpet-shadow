@@ -30,7 +30,7 @@ public abstract class ScreenHandlerMixin {
     private void handle_shadowing(Slot instance, ItemStack stack) {
         try {
             instance.setStack(stack);
-        } catch (CrashException | ThrowableSuppression error) {
+        } catch (Throwable error) {
             CarpetShadow.LOGGER.warn("New Shadow Item Created");
             String shadow_id = ((ShadowItem) (Object) stack).getShadowId();
             if (shadow_id == null) {

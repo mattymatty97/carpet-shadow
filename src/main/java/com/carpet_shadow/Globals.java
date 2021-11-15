@@ -1,13 +1,18 @@
 package com.carpet_shadow;
 
 import com.carpet_shadow.interfaces.ShadowItem;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Globals {
+
+    public static final Set<Inventory> toUpdate = new HashSet<>();
 
     public static ItemStack getByIdOrNull(String shadow_id) {
         if(shadow_id == null)
