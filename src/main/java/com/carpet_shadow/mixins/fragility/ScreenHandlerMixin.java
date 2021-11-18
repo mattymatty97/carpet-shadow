@@ -20,8 +20,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ScreenHandler.class)
 public abstract class ScreenHandlerMixin {
 
-    String shadowId1 = null;
-
     @Shadow
     public static boolean canInsertItemIntoSlot(@Nullable Slot slot, ItemStack stack, boolean allowOverflow) {
         return false;
@@ -32,25 +30,16 @@ public abstract class ScreenHandlerMixin {
 
     @Redirect(method = "internalOnSlotClick", slice = @Slice(
             from = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;canTakeItems(Lnet/minecraft/entity/player/PlayerEntity;)Z", ordinal = 1)),
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;setStack(Lnet/minecraft/item/ItemStack;)V", ordinal = 0)
-    )
-    public void remove_shadow_stack(Slot instance, ItemStack stack) {
-        shadowId1 = ((ShadowItem) (Object) stack).getShadowId();
-        instance.setStack(stack);
-    }
-
-    @Redirect(method = "internalOnSlotClick", slice = @Slice(
-            from = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;canTakeItems(Lnet/minecraft/entity/player/PlayerEntity;)Z", ordinal = 1)),
             at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;setCursorStack(Lnet/minecraft/item/ItemStack;)V", ordinal = 1)
     )
     public void remove_shadow_stack(ScreenHandler instance, ItemStack stack) {
+        String shadowId1 = ((ShadowItem) (Object) getCursorStack()).getShadowId();
         String shadowId2 = ((ShadowItem) (Object) stack).getShadowId();
         if (CarpetShadowSettings.shadowItemFragilityFixes && shadowId1 != null && shadowId1.equals(shadowId2)) {
             instance.setCursorStack(ItemStack.EMPTY);
         } else {
             instance.setCursorStack(stack);
         }
-        shadowId1 = null;
     }
 
     @Redirect(method = "internalOnSlotClick", slice = @Slice(
