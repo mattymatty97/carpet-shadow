@@ -3,9 +3,11 @@ carpet extension to fix various bugs related to shadow item stacks
 
 ## Carpet Settings
 
- - **shadowItemPersistence**
-
-    prevents shadow item instances from unlinking/duping when saved to disk
+ - **shadowItemMode**
+    what should happen to shadow items when saved and re-loaded from disk?
+    - UNLINK    ( vanilla default = dupe them )
+    - PERSIST   ( shadow items will re-link once re-load )
+    - VANISH    ( shadow items will disappear when re-load ) 
     
  - **shadowItemTooltip**
 
@@ -14,6 +16,10 @@ carpet extension to fix various bugs related to shadow item stacks
  - **shadowItemFragilityFixes**
 
     various fixes to item related actions that might unlink/dupe/delete the shadow stacks
+    
+ - **shadowItemUpdateFix**
+
+    inventory updates from shadow items will propagate to the other shadow item stacks even if in other invenotories
     
  - **shadowItemPreventCombine**
 
@@ -29,7 +35,7 @@ carpet extension to fix various bugs related to shadow item stacks
 
 ## Feature List
 
- - [x] Shadow Item Persistence
+ - [x] Shadow Item Persistence/Removal
 	 - [x] Server Restarts
 	 - [x] Player Join/Leave
 	 - [x] Chunk Unload/Reload
@@ -44,6 +50,8 @@ carpet extension to fix various bugs related to shadow item stacks
 		 - [x] Fail to pull from shadow stacks
 	 - [x] Droppers
 		 - [x] Unlinking on transfer to Inventory
+ - [x] Inventory Uodates
+ 	 - [x] propagation of updates after the world tick   
 
 ## Known Bugs
  - [ ]  **General**
