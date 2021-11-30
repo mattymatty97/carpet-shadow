@@ -40,7 +40,7 @@ public abstract class PlayerInventoryMixin {
 
     @Inject(method = "insertStack(Lnet/minecraft/item/ItemStack;)Z", at = @At("HEAD"), cancellable = true)
     public void redirect_insertStack(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-        if (CarpetShadowSettings.shadowItemFragilityFixes && ((ShadowItem) (Object) stack).getShadowId() != null) {
+        if (CarpetShadowSettings.shadowItemInventoryFragilityFix && ((ShadowItem) (Object) stack).getShadowId() != null) {
             int slot;
             if (stack.isEmpty()) {
                 cir.setReturnValue(false);
@@ -105,7 +105,7 @@ public abstract class PlayerInventoryMixin {
 
     @Inject(method = "addStack(ILnet/minecraft/item/ItemStack;)I", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerInventory;setStack(ILnet/minecraft/item/ItemStack;)V"), cancellable = true)
     public void add_shadow_item(int slot, ItemStack stack, CallbackInfoReturnable<Integer> cir) {
-        if (CarpetShadowSettings.shadowItemFragilityFixes && ((ShadowItem) (Object) stack).getShadowId() != null) {
+        if (CarpetShadowSettings.shadowItemInventoryFragilityFix && ((ShadowItem) (Object) stack).getShadowId() != null) {
             this.setStack(slot, stack);
             ItemEntity entity = ((ItemEntitySlot) (Object) stack).getEntity();
             if (entity != null) {

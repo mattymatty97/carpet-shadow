@@ -52,7 +52,7 @@ public abstract class ItemStackMixin implements ItemEntitySlot, ShifingItem {
 
     @Inject(method = "isEqual", at = @At("RETURN"), cancellable = true)
     private void check_Equal(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-        if (CarpetShadowSettings.shadowItemFragilityFixes && cir.getReturnValue()) {
+        if (CarpetShadowSettings.shadowItemInventoryFragilityFix && cir.getReturnValue()) {
             String shadow1 = ((ShadowItem) (Object) stack).getShadowId();
             String shadow2 = ((ShadowItem) (Object) this).getShadowId();
             if (!Objects.equals(shadow1, shadow2)) {

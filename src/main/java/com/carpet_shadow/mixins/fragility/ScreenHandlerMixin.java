@@ -12,10 +12,8 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Slice;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ScreenHandler.class)
 public abstract class ScreenHandlerMixin {
@@ -35,7 +33,7 @@ public abstract class ScreenHandlerMixin {
     public void remove_shadow_stack(ScreenHandler instance, ItemStack stack) {
         String shadowId1 = ((ShadowItem) (Object) getCursorStack()).getShadowId();
         String shadowId2 = ((ShadowItem) (Object) stack).getShadowId();
-        if (CarpetShadowSettings.shadowItemFragilityFixes && shadowId1 != null && shadowId1.equals(shadowId2)) {
+        if (CarpetShadowSettings.shadowItemInventoryFragilityFix && shadowId1 != null && shadowId1.equals(shadowId2)) {
             instance.setCursorStack(ItemStack.EMPTY);
         } else {
             instance.setCursorStack(stack);
@@ -47,7 +45,7 @@ public abstract class ScreenHandlerMixin {
     ),
             at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;transferSlot(Lnet/minecraft/entity/player/PlayerEntity;I)Lnet/minecraft/item/ItemStack;"))
     public ItemStack fix_shift(ScreenHandler instance, PlayerEntity player, int index) {
-        if (CarpetShadowSettings.shadowItemFragilityFixes) {
+        if (CarpetShadowSettings.shadowItemInventoryFragilityFix) {
             Slot og = instance.slots.get(index);
             ItemStack og_item = og.getStack();
             if (((ShadowItem) (Object) og_item).getShadowId() != null) {
@@ -73,7 +71,7 @@ public abstract class ScreenHandlerMixin {
     ),
             at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;split(I)Lnet/minecraft/item/ItemStack;", ordinal = 1))
     public ItemStack fix_shift(ItemStack instance, int amount) {
-        if (CarpetShadowSettings.shadowItemFragilityFixes && ((ShadowItem) (Object) instance).getShadowId() != null) {
+        if (CarpetShadowSettings.shadowItemInventoryFragilityFix && ((ShadowItem) (Object) instance).getShadowId() != null) {
             String shadow_id = ((ShadowItem) (Object) instance).getShadowId();
             ItemStack og_item = Globals.getByIdOrNull(shadow_id);
             if (og_item != null) {
@@ -88,7 +86,7 @@ public abstract class ScreenHandlerMixin {
     @Redirect(method = "insertItem",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isEmpty()Z",ordinal = 0))
     public boolean fix_shift2(ItemStack instance) {
-        if (CarpetShadowSettings.shadowItemFragilityFixes && ((ShifingItem) (Object) instance).isShiftMoving()) {
+        if (CarpetShadowSettings.shadowItemInventoryFragilityFix && ((ShifingItem) (Object) instance).isShiftMoving()) {
             return true;
         }
         return instance.isEmpty();
@@ -101,7 +99,7 @@ public abstract class ScreenHandlerMixin {
             ),
             at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;canInsertItemIntoSlot(Lnet/minecraft/screen/slot/Slot;Lnet/minecraft/item/ItemStack;Z)Z"))
     public boolean fixQuickCraft(Slot slot, ItemStack stack, boolean allowOverflow) {
-        if (CarpetShadowSettings.shadowItemFragilityFixes) {
+        if (CarpetShadowSettings.shadowItemInventoryFragilityFix) {
             ItemStack slotStack = slot.getStack();
             ItemStack ref1 = Globals.getByIdOrNull(((ShadowItem) (Object) slotStack).getShadowId());
             ItemStack ref2 = Globals.getByIdOrNull(((ShadowItem) (Object) stack).getShadowId());

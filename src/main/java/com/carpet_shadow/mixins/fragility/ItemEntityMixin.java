@@ -20,7 +20,7 @@ public abstract class ItemEntityMixin {
 
     @Redirect(method = "merge(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;I)Lnet/minecraft/item/ItemStack;", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;copy()Lnet/minecraft/item/ItemStack;"))
     private static ItemStack redirect_copy(ItemStack stack) {
-        if (CarpetShadowSettings.shadowItemFragilityFixes && ((ShadowItem) (Object) stack).getShadowId() != null) {
+        if (CarpetShadowSettings.shadowItemInventoryFragilityFix && ((ShadowItem) (Object) stack).getShadowId() != null) {
             return stack;
         }
         return stack.copy();

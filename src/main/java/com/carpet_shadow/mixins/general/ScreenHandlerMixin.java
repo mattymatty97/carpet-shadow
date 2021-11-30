@@ -2,6 +2,7 @@ package com.carpet_shadow.mixins.general;
 
 import com.carpet_shadow.CarpetShadow;
 import com.carpet_shadow.CarpetShadowSettings;
+import com.carpet_shadow.Globals;
 import com.carpet_shadow.interfaces.ShadowItem;
 import com.carpet_shadow.utility.ShadowingException;
 import net.minecraft.entity.player.PlayerEntity;
@@ -26,6 +27,8 @@ public abstract class ScreenHandlerMixin {
 
     @Shadow public abstract Slot getSlot(int index);
 
+    @Shadow public abstract ItemStack getCursorStack();
+
     @Redirect(method = "onSlotClick",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;internalOnSlotClick(IILnet/minecraft/screen/slot/SlotActionType;Lnet/minecraft/entity/player/PlayerEntity;)V"),
             require = 0)
@@ -33,22 +36,24 @@ public abstract class ScreenHandlerMixin {
         try {
             internalOnSlotClick(slotIndex, button, actionType, player);
         } catch (Throwable error) {
-            if(actionType!=SlotActionType.SWAP)
+            if(actionType!=SlotActionType.SWAP && actionType!=SlotActionType.PICKUP && actionType!=SlotActionType.QUICK_CRAFT)
                 throw error;
 
             ItemStack stack1 = this.getSlot(slotIndex).getStack();
             ItemStack stack2 = player.getInventory().getStack(button);
+            ItemStack stack3 = this.getCursorStack();
+            ItemStack shadow = null;
+            if(stack1 == stack2 || stack1 == stack3)
+                shadow = stack1;
+            else if (stack2 == stack3)
+                shadow = stack2;
 
-            if(stack1 == stack2){
+            if(shadow != null){
                 CarpetShadow.LOGGER.warn("New Shadow Item Created");
-                String shadow_id = ((ShadowItem) (Object) stack1).getShadowId();
-                if (shadow_id == null) {
-                    do {
-                        shadow_id = CarpetShadow.shadow_id_generator.nextString();
-                    } while (CarpetShadow.shadowMap.containsKey(shadow_id));
-                    CarpetShadow.shadowMap.put(shadow_id, new WeakReference<>(stack1));
-                    ((ShadowItem) (Object) stack1).setShadowId(shadow_id);
-                }
+                String shadow_id = ((ShadowItem) (Object) shadow).getShadowId();
+                if (shadow_id == null)
+                    shadow_id = CarpetShadow.shadow_id_generator.nextString();
+                Globals.getByIdOrAdd(shadow_id,shadow);
                 if (CarpetShadowSettings.shadowItemMode == CarpetShadowSettings.Mode.UNLINK) {
                     throw error;
                 }
