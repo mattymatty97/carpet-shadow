@@ -19,20 +19,4 @@ public abstract class ItemStackMixin implements ShadowItem {
         shadow_id = id;
     }
 
-    /*
-    @Inject(method="split", at=@At("HEAD"), cancellable = true)
-    public void pre_split(int amount, CallbackInfoReturnable<ItemStack> cir){
-        if(CarpetShadowSettings.shadowItemFragilityFix && this.getShadowId() != null && this.getCount() == amount){
-            cir.setReturnValue((ItemStack)(Object)this);
-        }
-    }*/
-
-/*
-    @Inject(at = @At("RETURN"), method = "copy")
-    private void post_copy(CallbackInfoReturnable<ItemStack> cir) {
-        if(traces.size() > 1 || getShadowId() != null){
-            ((ShadowItem)(Object)cir.getReturnValue()).addAllTrace(traces);
-            ((ShadowItem)(Object)cir.getReturnValue()).addTrace(Thread.currentThread().getStackTrace());
-        }
-    }*/
 }

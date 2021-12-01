@@ -13,6 +13,7 @@
     "fragility.SlotMixin",
     "general.ItemStackMixin",
     "general.ScreenHandlerMixin",
+    "general.LootTableMixin",
     "inv_updates.ItemStackMixin",
     "inv_updates.MinecraftServerMixin",
     "inv_updates.SimpleInventoryMixin",
