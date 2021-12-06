@@ -15,8 +15,7 @@ import net.minecraft.util.crash.CrashReportSection;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerInventory.class)
@@ -38,68 +37,16 @@ public abstract class PlayerInventoryMixin {
     @Shadow
     public abstract void setStack(int slot, ItemStack stack);
 
-    @Inject(method = "insertStack(Lnet/minecraft/item/ItemStack;)Z", at = @At("HEAD"), cancellable = true)
-    public void redirect_insertStack(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-        if (CarpetShadowSettings.shadowItemInventoryFragilityFix && ((ShadowItem) (Object) stack).getShadowId() != null) {
-            int slot;
-            if (stack.isEmpty()) {
-                cir.setReturnValue(false);
-                return;
-            }
-            try {
-                if (!stack.isDamaged()) {
-                    int i;
-                    int count;
-                    do {
-                        i = stack.getCount();
-                        count = this.addStack(stack);
-                        if (count > 0)
-                            stack.setCount(count);
-                    } while (!stack.isEmpty() && stack.getCount() < i && count >= 0);
-                    if (count < 0) {
-                        cir.setReturnValue(true);
-                        return;
-                    }
-                    if (stack.getCount() == i && this.player.getAbilities().creativeMode) {
-                        ItemEntity entity = ((ItemEntitySlot) (Object) stack).getEntity();
-                        if (entity != null)
-                            entity.setDespawnImmediately();
-                        else
-                            stack.setCount(0);
-                        cir.setReturnValue(true);
-                        return;
-                    }
-                    cir.setReturnValue(stack.getCount() < i);
-                    return;
-                }
-                slot = this.getEmptySlot();
-                if (slot >= 0) {
-                    this.main.set(slot, stack);
-                    this.main.get(slot).setCooldown(5);
-                    ItemEntity entity = ((ItemEntitySlot) (Object) stack).getEntity();
-                    if (entity != null)
-                        entity.setDespawnImmediately();
-                    cir.setReturnValue(true);
-                    return;
-                }
-                if (this.player.getAbilities().creativeMode) {
-                    ItemEntity entity = ((ItemEntitySlot) (Object) stack).getEntity();
-                    if (entity != null)
-                        entity.setDespawnImmediately();
-                    else
-                        stack.setCount(0);
-                    cir.setReturnValue(true);
-                    return;
-                }
-                cir.setReturnValue(false);
-            } catch (Throwable i) {
-                CrashReport crashReport = CrashReport.create(i, "Adding item to inventory");
-                CrashReportSection crashReportSection = crashReport.addElement("Item being added");
-                crashReportSection.add("Item ID", Item.getRawId(stack.getItem()));
-                crashReportSection.add("Item data", stack.getDamage());
-                crashReportSection.add("Item name", () -> stack.getName().getString());
-                throw new CrashException(crashReport);
-            }
+    @Redirect(method = "insertStack(ILnet/minecraft/item/ItemStack;)Z", at=@At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;setCount(I)V"), slice = @Slice(from = @At(value = "FIELD",target = "Lnet/minecraft/entity/player/PlayerAbilities;creativeMode:Z")))
+    private void modify_count(ItemStack instance, int count){
+        if(count==0 && CarpetShadowSettings.shadowItemInventoryFragilityFix && ((ShadowItem) (Object) instance).getShadowId() != null){
+            ItemEntity entity = ((ItemEntitySlot) (Object) instance).getEntity();
+            if (entity != null)
+                entity.setDespawnImmediately();
+            else
+                instance.setCount(0);
+        }else{
+            instance.setCount(count);
         }
     }
 
