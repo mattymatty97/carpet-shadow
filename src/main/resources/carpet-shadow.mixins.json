@@ -12,8 +12,8 @@
     "fragility.ScreenHandlerMixin",
     "fragility.SlotMixin",
     "general.ItemStackMixin",
-    "general.ScreenHandlerMixin",
     "general.LootTableMixin",
+    "general.ScreenHandlerMixin",
     "inv_updates.ItemStackMixin",
     "inv_updates.MinecraftServerMixin",
     "inv_updates.SimpleInventoryMixin",
@@ -35,6 +35,7 @@
   "client": [
   ],
   "server": [
+    "hand_update_fix.ServerPlayerInteractionManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

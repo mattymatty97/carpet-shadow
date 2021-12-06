@@ -20,6 +20,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Objects;
+
 @Mixin(PacketByteBuf.class)
 public abstract class PacketByteBufMixin {
 
@@ -44,6 +46,7 @@ public abstract class PacketByteBufMixin {
             list.add(NbtString.of(Text.Serializer.toJson(text)));
             display.put(ItemStack.LORE_KEY, list);
             ret.put(ItemStack.DISPLAY_KEY, display);
+            ret.putString(ShadowItem.SHADOW_KEY,((ShadowItem) (Object) instance).getShadowId());
         }
         return ret;
     }
@@ -55,6 +58,10 @@ public abstract class PacketByteBufMixin {
         MutableText mutableText2;
         NbtCompound nbt = stack.getNbt();
         if (nbt != null && nbt.contains(ItemStack.DISPLAY_KEY)) {
+            String shadow_id = nbt.getString(ShadowItem.SHADOW_KEY);
+            if (!shadow_id.equals("")){
+                ((ShadowItem) (Object) stack).setShadowId(shadow_id);
+            }
             NbtCompound display = nbt.getCompound(ItemStack.DISPLAY_KEY);
             if (display.contains(ItemStack.LORE_KEY)) {
                 NbtList lore = display.getList(ItemStack.LORE_KEY, 8);
@@ -64,7 +71,8 @@ public abstract class PacketByteBufMixin {
                         mutableText2 = Text.Serializer.fromJson(string);
                         if (mutableText2 != null && mutableText2.asString().startsWith("shadow_id: ")) {
                             lore.remove(i);
-                            ((ShadowItem) (Object) stack).setShadowId(mutableText2.getSiblings().get(0).asString());
+                            if(((ShadowItem) (Object) stack).getShadowId() == null)
+                                ((ShadowItem) (Object) stack).setShadowId(mutableText2.getSiblings().get(0).asString());
                             break;
                         }
                     } catch (JsonParseException ignored) {
