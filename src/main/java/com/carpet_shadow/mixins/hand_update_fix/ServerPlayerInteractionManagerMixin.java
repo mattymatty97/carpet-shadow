@@ -30,15 +30,13 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(ServerPlayerInteractionManager.class)
 public abstract class ServerPlayerInteractionManagerMixin {
 
-    @Shadow @Final private static Logger LOGGER;
-
     @Shadow public abstract boolean isCreative();
 
     @Inject(method = "interactBlock", at=@At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/item/ItemStack;useOnBlock(Lnet/minecraft/item/ItemUsageContext;)Lnet/minecraft/util/ActionResult;"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
     private void inject_on_block_use(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir, BlockPos blockPos, BlockState blockState, boolean namedScreenHandlerFactory, boolean bl, ItemStack itemStack, ItemUsageContext context, ActionResult actionResult){
-        if(CarpetShadowServerSettings.shadowItemUseFix && ((ShadowItem)(Object)stack).getShadowId() != null) {
+        if(CarpetShadowServerSettings.shadowItemUseFix && ((ShadowItem)(Object)stack).getShadowId() != null && !isCreative()) {
             switch (actionResult) {
-                case SUCCESS, CONSUME, CONSUME_PARTIAL -> {
+                case SUCCESS, CONSUME -> {
                     int index = (hand == Hand.OFF_HAND) ? PlayerInventory.OFF_HAND_SLOT : player.getInventory().selectedSlot;
                     player.currentScreenHandler.getSlotIndex(player.getInventory(), index).ifPresent(i -> player.currentScreenHandler.setPreviousTrackedSlot(i, new ItemStack(Blocks.AIR)));
                 }
@@ -48,9 +46,9 @@ public abstract class ServerPlayerInteractionManagerMixin {
 
     @Inject(method = "interactItem", at=@At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/item/ItemStack;use(Lnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/Hand;)Lnet/minecraft/util/TypedActionResult;"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
     private void inject_on_item_use(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, CallbackInfoReturnable<ActionResult> cir, int i, int j, TypedActionResult<ItemStack> typedActionResult){
-        if(CarpetShadowServerSettings.shadowItemUseFix && ((ShadowItem)(Object)stack).getShadowId() != null) {
+        if(CarpetShadowServerSettings.shadowItemUseFix && ((ShadowItem)(Object)stack).getShadowId() != null && !isCreative()) {
             switch (typedActionResult.getResult()) {
-                case SUCCESS, CONSUME, CONSUME_PARTIAL -> {
+                case SUCCESS, CONSUME -> {
                     int index = (hand == Hand.OFF_HAND) ? PlayerInventory.OFF_HAND_SLOT : player.getInventory().selectedSlot;
                     player.currentScreenHandler.getSlotIndex(player.getInventory(), index).ifPresent(index2 -> player.currentScreenHandler.setPreviousTrackedSlot(index2, new ItemStack(Blocks.AIR)));
                 }
