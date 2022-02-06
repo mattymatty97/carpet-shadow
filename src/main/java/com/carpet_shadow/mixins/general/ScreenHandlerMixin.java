@@ -5,7 +5,12 @@ import com.carpet_shadow.CarpetShadowSettings;
 import com.carpet_shadow.Globals;
 import com.carpet_shadow.interfaces.ShadowItem;
 import com.carpet_shadow.utility.ShadowingException;
+import com.carpet_shadow.utility.SlotException;
+import de.cronn.reflection.util.ClassUtils;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.MappingResolver;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
@@ -18,6 +23,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Slice;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 
 @Mixin(ScreenHandler.class)
 public abstract class ScreenHandlerMixin {
@@ -28,6 +35,8 @@ public abstract class ScreenHandlerMixin {
     @Shadow public abstract Slot getSlot(int index);
 
     @Shadow public abstract ItemStack getCursorStack();
+
+    @Shadow public abstract void setCursorStack(ItemStack stack);
 
     @Redirect(method = "onSlotClick",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;internalOnSlotClick(IILnet/minecraft/screen/slot/SlotActionType;Lnet/minecraft/entity/player/PlayerEntity;)V"),
@@ -47,6 +56,16 @@ public abstract class ScreenHandlerMixin {
                 shadow = stack1;
             else if (stack2 == stack3)
                 shadow = stack2;
+
+            if ( CarpetShadowSettings.shadowItemOldGeneration && shadow == null && error instanceof SlotException){
+                if(actionType!=SlotActionType.SWAP){
+                    player.getInventory().setStack(button,stack1);
+                    shadow = stack1;
+                }else{
+                    this.setCursorStack(stack1);
+                    shadow = stack1;
+                }
+            }
 
             if(shadow != null){
                 CarpetShadow.LOGGER.warn("New Shadow Item Created");

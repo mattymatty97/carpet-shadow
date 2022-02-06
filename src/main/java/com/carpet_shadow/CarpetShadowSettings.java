@@ -24,6 +24,8 @@ public class CarpetShadowSettings {
     public static boolean shadowItemUpdateFix = false;
     @Rule(desc = "Prevent Merging any Shadow Item on base inventory movements", category = {SHADOW, OPTIMIZATION, FEATURE})
     public static boolean shadowItemPreventCombine = false;
+    @Rule(desc = "Reintroduce Pre-1.18 shadow item generation", category = {SHADOW, EXPERIMENTAL, FEATURE})
+    public static boolean shadowItemOldGeneration = false;
 
     private static class IdSizeValidator extends Validator<Integer> {
         @Override
