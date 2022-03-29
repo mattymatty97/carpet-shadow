@@ -22,7 +22,7 @@ public class CarpetShadow implements CarpetExtension, ModInitializer {
 
     @Override
     public void onGameStarted() {
-        LOGGER.info("Carpet Shadow Loaded!");
+        CarpetShadow.LOGGER.info("Carpet Shadow Loaded!");
         if(FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER){
             CarpetServer.settingsManager.parseSettingsClass(CarpetShadowServerSettings.class);
         }
@@ -33,7 +33,7 @@ public class CarpetShadow implements CarpetExtension, ModInitializer {
     @Override
     public void onInitialize() {
         CarpetServer.manageExtension(new CarpetShadow());
-        LOGGER.info("Carpet Shadow Loading!");
+        CarpetShadow.LOGGER.info("Carpet Shadow Loading!");
         ServerLifecycleEvents.SERVER_STOPPED.register((server -> {
             shadowMap.clear();
         }));

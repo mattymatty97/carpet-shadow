@@ -1,5 +1,6 @@
 package com.carpet_shadow.mixins.inv_updates;
 
+import com.carpet_shadow.CarpetShadow;
 import com.carpet_shadow.CarpetShadowSettings;
 import com.carpet_shadow.Globals;
 import net.minecraft.inventory.Inventory;
@@ -17,9 +18,6 @@ import java.util.function.BooleanSupplier;
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin {
 
-    @Shadow @Final
-    static Logger LOGGER;
-
     @Inject(method = "tick", at=@At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;tickWorlds(Ljava/util/function/BooleanSupplier;)V", shift = At.Shift.AFTER))
     public void afterWorldTick(BooleanSupplier shouldKeepTicking, CallbackInfo ci){
         try{
@@ -28,12 +26,12 @@ public abstract class MinecraftServerMixin {
                     try {
                         inv.markDirty();
                     } catch (Throwable ex) {
-                        LOGGER.error("Caught Exception while propagating shadow stack updates: ", ex);
+                        CarpetShadow.LOGGER.error("Caught Exception while propagating shadow stack updates: ", ex);
                     }
                 }
             }
         }catch (Throwable error){
-            LOGGER.error("Caught Exception while propagating shadow stack updates: ",error);
+            CarpetShadow.LOGGER.error("Caught Exception while propagating shadow stack updates: ",error);
         }finally {
             Globals.toUpdate.clear();
         }
