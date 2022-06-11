@@ -32,7 +32,7 @@ public abstract class PacketByteBufMixin {
         NbtCompound display = new NbtCompound();
         if (CarpetShadowSettings.shadowItemTooltip && ((ShadowItem) (Object) instance).getShadowId() != null) {
             MutableText text = MutableText.of(new LiteralTextContent("shadow_id: "));
-            MutableText sub = MutableText.of(new LiteralTextContent(((ShadowItem) (Object) this).getShadowId()));
+            MutableText sub = MutableText.of(new LiteralTextContent(((ShadowItem) (Object) instance).getShadowId()));
             sub.formatted(Formatting.GOLD, Formatting.BOLD);
             text.append(sub);
             text.formatted(Formatting.ITALIC);

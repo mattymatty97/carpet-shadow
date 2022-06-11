@@ -56,16 +56,6 @@ public abstract class ScreenHandlerMixin {
             else if (stack2 == stack3)
                 shadow = stack2;
 
-            if ( CarpetShadowSettings.shadowItemOldGeneration && shadow == null && error instanceof SlotException){
-                if(actionType!=SlotActionType.SWAP){
-                    player.getInventory().setStack(button,stack1);
-                    shadow = stack1;
-                }else{
-                    this.setCursorStack(stack1);
-                    shadow = stack1;
-                }
-            }
-
             if(shadow != null){
                 CarpetShadow.LOGGER.warn("New Shadow Item Created");
                 String shadow_id = ((ShadowItem) (Object) shadow).getShadowId();

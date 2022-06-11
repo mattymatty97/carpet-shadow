@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.Mixin;
 
 
 @Mixin(ItemStack.class)
-public abstract class ItemStackMixin implements ShadowItem {
+public class ItemStackMixin implements ShadowItem {
     private String shadow_id = null;
 
     @Override
