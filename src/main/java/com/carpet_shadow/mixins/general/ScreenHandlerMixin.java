@@ -47,7 +47,6 @@ public abstract class ScreenHandlerMixin {
         } catch (Throwable error) {
             if(actionType!=SlotActionType.SWAP && actionType!=SlotActionType.PICKUP && actionType!=SlotActionType.QUICK_CRAFT)
                 throw error;
-
             ItemStack stack1 = this.getSlot(slotIndex).getStack();
             ItemStack stack2 = player.getInventory().getStack(button);
             ItemStack stack3 = this.getCursorStack();

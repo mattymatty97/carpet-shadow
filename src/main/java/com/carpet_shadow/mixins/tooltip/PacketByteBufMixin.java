@@ -10,7 +10,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.LiteralTextContent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -31,8 +31,10 @@ public abstract class PacketByteBufMixin {
         NbtCompound ret = instance.getNbt();
         NbtCompound display = new NbtCompound();
         if (CarpetShadowSettings.shadowItemTooltip && ((ShadowItem) (Object) instance).getShadowId() != null) {
-            LiteralText text = new LiteralText("shadow_id: ");
-            text.append(new LiteralText(((ShadowItem) (Object) instance).getShadowId()).formatted(Formatting.GOLD, Formatting.BOLD));
+            MutableText text = MutableText.of(new LiteralTextContent("shadow_id: "));
+            MutableText sub = MutableText.of(new LiteralTextContent(((ShadowItem) (Object) this).getShadowId()));
+            sub.formatted(Formatting.GOLD, Formatting.BOLD);
+            text.append(sub);
             text.formatted(Formatting.ITALIC);
             NbtList list = new NbtList();
             if (ret == null) {
@@ -69,10 +71,10 @@ public abstract class PacketByteBufMixin {
                     string = lore.getString(i);
                     try {
                         mutableText2 = Text.Serializer.fromJson(string);
-                        if (mutableText2 != null && mutableText2.asString().startsWith("shadow_id: ")) {
+                        if (mutableText2 != null && mutableText2.getContent() instanceof LiteralTextContent && ((LiteralTextContent)mutableText2.getContent()).string().equals("shadow_id: ")) {
                             lore.remove(i);
                             if(((ShadowItem) (Object) stack).getShadowId() == null)
-                                ((ShadowItem) (Object) stack).setShadowId(mutableText2.getSiblings().get(0).asString());
+                                ((ShadowItem) (Object) stack).setShadowId(((LiteralTextContent)mutableText2.getSiblings().get(0).getContent()).string());
                             break;
                         }
                     } catch (JsonParseException ignored) {

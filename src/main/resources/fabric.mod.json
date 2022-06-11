@@ -5,12 +5,26 @@
   "name": "Carpet Shadow",
   "description": "carpet patches for shadow items",
   "authors": [
-    "mattymatty"
+    {
+      "name": "mattymatty",
+      "contact": {
+        "discord": "mattymatty#9621"
+      }
+    }
   ],
   "contact": {
-    "discord": "mattymatty#9621",
-    "homepage": "https://github.com/mattymatty97/carpet-shadow/releases"
+    "homepage": "https://github.com/mattymatty97/carpet-shadow/releases",
+    "issues": "https://github.com/mattymatty97/carpet-shadow/issues"
   },
+  "contributors": [
+    {
+      "name": "adammakesfilm",
+      "comment": "icon author",
+      "contact": {
+        "discord": "adammakesfilm#0001"
+      }
+    }
+  ],
   "license": "MIT",
   "icon": "assets/carpet-shadow/icon.png",
   "environment": "*",
@@ -23,10 +37,10 @@
     "carpet-shadow.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.12.8",
-    "fabric": ">=0.44.0",
-    "carpet": ">=1.4.56",
-    "minecraft": "1.18.x"
+    "fabricloader": ">=0.14.7",
+    "fabric": ">=0.55.3",
+    "carpet": ">=1.4.79",
+    "minecraft": "1.19.x"
   },
   "custom": {
     "modmenu": {
