@@ -41,12 +41,16 @@ public abstract class ScreenHandlerMixin {
     @Redirect(method = "onSlotClick",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;internalOnSlotClick(IILnet/minecraft/screen/slot/SlotActionType;Lnet/minecraft/entity/player/PlayerEntity;)V"),
             require = 0)
-    private void handle_shadowing(ScreenHandler instance, int slotIndex, int button, SlotActionType actionType, PlayerEntity player) {
+    private void handle_shadowing(ScreenHandler instance, int slotIndex, int button, SlotActionType actionType, PlayerEntity player) throws Throwable {
         try {
             internalOnSlotClick(slotIndex, button, actionType, player);
         } catch (Throwable error) {
-            if(actionType!=SlotActionType.SWAP && actionType!=SlotActionType.PICKUP && actionType!=SlotActionType.QUICK_CRAFT)
+            if(actionType!=SlotActionType.SWAP && actionType!=SlotActionType.PICKUP && actionType!=SlotActionType.QUICK_CRAFT) {
+                if (error instanceof SlotException slotException) {
+                    throw slotException.getCause();
+                }
                 throw error;
+            }
 
             ItemStack stack1 = this.getSlot(slotIndex).getStack();
             ItemStack stack2 = player.getInventory().getStack(button);
@@ -57,17 +61,7 @@ public abstract class ScreenHandlerMixin {
             else if (stack2 == stack3)
                 shadow = stack2;
 
-            if ( CarpetShadowSettings.shadowItemOldGeneration && shadow == null && error instanceof SlotException){
-                if(actionType!=SlotActionType.SWAP){
-                    player.getInventory().setStack(button,stack1);
-                    shadow = stack1;
-                }else{
-                    this.setCursorStack(stack1);
-                    shadow = stack1;
-                }
-            }
-
-            if(shadow != null){
+            if(shadow != null && shadow != ItemStack.EMPTY){
                 CarpetShadow.LOGGER.warn("New Shadow Item Created");
                 String shadow_id = ((ShadowItem) (Object) shadow).getShadowId();
                 if (shadow_id == null)

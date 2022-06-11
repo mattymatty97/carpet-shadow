@@ -5,12 +5,26 @@
   "name": "Carpet Shadow",
   "description": "carpet patches for shadow items",
   "authors": [
-    "mattymatty"
+    {
+      "name": "mattymatty",
+      "contact": {
+        "discord": "mattymatty#9621"
+      }
+    }
   ],
   "contact": {
-    "discord": "mattymatty#9621",
-    "homepage": "https://github.com/mattymatty97/carpet-shadow/releases"
+    "homepage": "https://github.com/mattymatty97/carpet-shadow/releases",
+    "issues": "https://github.com/mattymatty97/carpet-shadow/issues"
   },
+  "contributors": [
+    {
+      "name": "adammakesfilm",
+      "comment": "icon author",
+      "contact": {
+        "discord": "adammakesfilm#0001"
+      }
+    }
+  ],
   "license": "MIT",
   "icon": "assets/carpet-shadow/icon.png",
   "environment": "*",
