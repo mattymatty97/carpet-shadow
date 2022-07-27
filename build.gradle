@@ -1,5 +1,6 @@
 plugins {
-    id 'fabric-loom' version '0.10-SNAPSHOT'
+    id 'fabric-loom' version '0.12-SNAPSHOT'
+    id 'io.github.juuxel.loom-quiltflower' version '1.7.1'
     id 'maven-publish'
 }
 
@@ -100,9 +101,14 @@ tasks.register("updateBuildNumber") {
     doLast {
         Properties props = new Properties()
 
-        File propsFile = new File('build.properties')
+        File propsFile = new File("build-${project.minecraft_version}.properties")
 
-        props.load(propsFile.newDataInputStream())
+        try {
+            props.load(propsFile.newDataInputStream())
+        }catch (IOException ignored){
+            props.setProperty('mod_buildnumber', "1")
+            props.setProperty('mod_version', project.mod_version.toString())
+        }
 
         String prevVersion = (props.getProperty('mod_version'))
 
@@ -138,6 +144,6 @@ tasks.register("FinalizeBuild", Copy) {
     outputs.upToDateWhen { false }
 }
 
-tasks.build.finalizedBy updateBuildNumber
-tasks.updateBuildNumber.shouldRunAfter build
-tasks.updateBuildNumber.finalizedBy FinalizeBuild
+tasks.compileJava.finalizedBy updateBuildNumber
+tasks.updateBuildNumber.shouldRunAfter compileJava
+tasks.build.finalizedBy FinalizeBuild
