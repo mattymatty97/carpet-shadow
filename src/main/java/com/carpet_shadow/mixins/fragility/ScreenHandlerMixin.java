@@ -43,7 +43,7 @@ public abstract class ScreenHandlerMixin {
     @Redirect(method = "internalOnSlotClick", slice = @Slice(
             from = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;canTakeItems(Lnet/minecraft/entity/player/PlayerEntity;)Z")
     ),
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;transferSlot(Lnet/minecraft/entity/player/PlayerEntity;I)Lnet/minecraft/item/ItemStack;"))
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;quickMove(Lnet/minecraft/entity/player/PlayerEntity;I)Lnet/minecraft/item/ItemStack;"))
     public ItemStack fix_shift(ScreenHandler instance, PlayerEntity player, int index) {
         if (CarpetShadowSettings.shadowItemInventoryFragilityFix) {
             Slot og = instance.slots.get(index);
@@ -53,7 +53,7 @@ public abstract class ScreenHandlerMixin {
                 ((ShadowItem) (Object) mirror).setShadowId(((ShadowItem) (Object) og_item).getShadowId());
                 og.setStack(mirror);
                 ((ShifingItem)(Object)mirror).setShiftMoving(true);
-                ItemStack ret = instance.transferSlot(player, index);
+                ItemStack ret = instance.quickMove(player, index);
                 ((ShifingItem)(Object)mirror).setShiftMoving(false);
                 if (ret == ItemStack.EMPTY) {
                     og_item = Globals.getByIdOrAdd(((ShadowItem) (Object) og_item).getShadowId(), og_item);
@@ -63,7 +63,7 @@ public abstract class ScreenHandlerMixin {
                 return ret;
             }
         }
-        return instance.transferSlot(player, index);
+        return instance.quickMove(player, index);
     }
 
     @Redirect(method = "insertItem", slice = @Slice(

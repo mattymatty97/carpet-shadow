@@ -45,7 +45,7 @@ public abstract class ItemStackMixin implements ItemEntitySlot, ShifingItem {
         this.entity = entity;
     }
 
-    @Inject(method = "isItemEqualIgnoreDamage", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "isItemEqual", at = @At("RETURN"), cancellable = true)
     private void check_EqualIgnoreDamage(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
         Globals.shadow_merge_check(stack, (ItemStack) (Object) this, cir);
     }
