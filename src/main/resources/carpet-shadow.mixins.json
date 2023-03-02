@@ -25,7 +25,6 @@
     "inv_updates.loaders.BlockStateArgumentMixin",
     "inv_updates.loaders.CloneCommandMixin",
     "inv_updates.loaders.FallingBlockEntityMixin",
-    "inv_updates.loaders.StructureMixin",
     "persistence.ItemStackMixin",
     "tooltip.InventoryS2CPacketMixin",
     "tooltip.ItemStackMixin",
