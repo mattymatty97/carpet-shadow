@@ -8,6 +8,7 @@ import net.minecraft.server.command.ServerCommandSource;
 
 import static carpet.settings.RuleCategory.*;
 
+@SuppressWarnings({"removal"})
 public class CarpetShadowSettings {
     public static final String SHADOW = "shadow_items";
     @Rule(desc = "Shadow Items Action over Unloading ( Unlink is default vanilla )", category = {SHADOW, BUGFIX})

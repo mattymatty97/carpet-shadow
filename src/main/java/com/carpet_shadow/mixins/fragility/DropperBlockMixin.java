@@ -1,6 +1,5 @@
 package com.carpet_shadow.mixins.fragility;
 
-import com.carpet_shadow.CarpetShadow;
 import com.carpet_shadow.CarpetShadowSettings;
 import com.carpet_shadow.interfaces.ShadowItem;
 import net.minecraft.block.DropperBlock;
@@ -12,7 +11,8 @@ import net.minecraft.util.math.BlockPointerImpl;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 

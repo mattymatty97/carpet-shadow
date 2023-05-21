@@ -4,7 +4,6 @@ import carpet.CarpetExtension;
 import carpet.CarpetServer;
 import com.carpet_shadow.utility.RandomString;
 import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.loader.api.FabricLoader;

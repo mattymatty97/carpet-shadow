@@ -20,8 +20,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Objects;
-
 @Mixin(PacketByteBuf.class)
 public abstract class PacketByteBufMixin {
 
@@ -59,10 +57,11 @@ public abstract class PacketByteBufMixin {
         String string;
         MutableText mutableText2;
         NbtCompound nbt = stack.getNbt();
-        if (nbt != null && nbt.contains(ItemStack.DISPLAY_KEY)) {
+        if (nbt != null && (nbt.contains(ItemStack.DISPLAY_KEY) || nbt.contains(ShadowItem.SHADOW_KEY))) {
             String shadow_id = nbt.getString(ShadowItem.SHADOW_KEY);
             if (!shadow_id.equals("")){
                 ((ShadowItem) (Object) stack).setShadowId(shadow_id);
+                nbt.remove(ShadowItem.SHADOW_KEY);
             }
             NbtCompound display = nbt.getCompound(ItemStack.DISPLAY_KEY);
             if (display.contains(ItemStack.LORE_KEY)) {
@@ -84,9 +83,9 @@ public abstract class PacketByteBufMixin {
                     display.remove(ItemStack.LORE_KEY);
                 if (display.isEmpty())
                     nbt.remove(ItemStack.DISPLAY_KEY);
-                if (nbt.isEmpty())
-                    stack.setNbt(null);
             }
+            if (nbt.isEmpty())
+                stack.setNbt(null);
         }
 
     }

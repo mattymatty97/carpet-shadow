@@ -4,27 +4,15 @@ import com.carpet_shadow.CarpetShadow;
 import com.carpet_shadow.CarpetShadowSettings;
 import com.carpet_shadow.Globals;
 import com.carpet_shadow.interfaces.ShadowItem;
-import com.carpet_shadow.utility.ShadowingException;
-import com.carpet_shadow.utility.SlotException;
-import de.cronn.reflection.util.ClassUtils;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.MappingResolver;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.util.crash.CrashException;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.Slice;
-
-import java.lang.ref.WeakReference;
-import java.lang.reflect.Method;
-import java.util.Arrays;
 
 @Mixin(ScreenHandler.class)
 public abstract class ScreenHandlerMixin {
