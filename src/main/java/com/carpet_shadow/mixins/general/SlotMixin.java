@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(Slot.class)
 public class SlotMixin {
-    @Redirect(method="setStack", at = @At(value = "INVOKE",target = "Lnet/minecraft/screen/slot/Slot;markDirty()V"))
+    @Redirect(method="setStackNoCallbacks", at = @At(value = "INVOKE",target = "Lnet/minecraft/screen/slot/Slot;markDirty()V"))
     public void catchException(Slot instance){
         try{
             instance.markDirty();

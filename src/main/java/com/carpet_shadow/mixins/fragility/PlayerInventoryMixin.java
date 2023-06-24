@@ -1,6 +1,7 @@
 package com.carpet_shadow.mixins.fragility;
 
 import com.carpet_shadow.CarpetShadowSettings;
+import com.carpet_shadow.Globals;
 import com.carpet_shadow.interfaces.ItemEntitySlot;
 import com.carpet_shadow.interfaces.ShadowItem;
 import net.minecraft.entity.ItemEntity;

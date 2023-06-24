@@ -1,0 +1,25 @@
+{
+  // Categories:
+  "carpet.category.shadow_items": "shadow_items",
+
+  // Rules:
+
+  "carpet.rule.shadowItemMode.desc": "Shadow Items Action over Unloading: ",
+  "carpet.rule.shadowItemMode.extra.0": "UNLINK -> default vanilla ( will also disable the mod )",
+  "carpet.rule.shadowItemMode.extra.1": "PERSIST -> shadow items will survive unloading",
+  "carpet.rule.shadowItemMode.extra.2": "VANISH -> shadow items will disappear if unloaded",
+  "carpet.rule.shadowItemIdSize.desc": "Shadow Items Id Length",
+  "carpet.rule.shadowSuppressionGeneration.desc": "Reintroduce pre 1.19 shadow item generation by update suppression",
+  "carpet.rule.shadowSuppressionGeneration.extra.0": "DISCLAIMER: this will not reintroduce old update suppression",
+  "carpet.rule.shadowCraftingGeneration.desc": "Introduce a crafting recipe to create new Shadow Items",
+  "carpet.rule.shadowCraftingGeneration.extra.0": "combine any item stack and a EnderChest to generate a new shadow stack",
+  "carpet.rule.shadowCraftingGeneration.extra.1": "the operation will consume 1 item from each component",
+  "carpet.rule.shadowCraftingGeneration.extra.2": "WARNING: do not move the items with SHIFT",
+  "carpet.rule.shadowCraftingGeneration.extra.3": "WARNING: do not close the GUI with a shadow stack in the crafting grid",
+  "carpet.rule.shadowItemTooltip.desc": "Show Shadow Items Id in Item Names",
+  "carpet.rule.shadowItemInventoryFragilityFix.desc": "Prevent Unlinking Shadow Items on base inventory movements",
+  "carpet.rule.shadowItemTransferFragilityFix.desc": "Prevent Unlinking Shadow Items on hopper-dropper item transfers",
+  "carpet.rule.shadowItemUpdateFix.desc": "Shadow Items will produce inventory updates",
+  "carpet.rule.shadowItemPreventCombine.desc": "Prevent Merging any Shadow Item on base inventory movements",
+  "carpet.rule.shadowItemUseFix.desc": "Prevents desync between client and server when using a fast refilling shadow stack"
+}

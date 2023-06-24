@@ -24,7 +24,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class PacketByteBufMixin {
 
     @Redirect(method = "writeItemStack", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getNbt()Lnet/minecraft/nbt/NbtCompound;"))
-    @Environment(EnvType.SERVER)
     public NbtCompound add_shadow_lore(ItemStack instance) {
         NbtCompound ret = instance.getNbt();
         NbtCompound display = new NbtCompound();
