@@ -45,16 +45,16 @@ public abstract class ItemStackMixin implements ItemEntitySlot, ShifingItem {
         this.entity = entity;
     }
 
-    @Inject(method = "isItemEqual", at = @At("RETURN"), cancellable = true)
-    private void check_EqualIgnoreDamage(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-        Globals.shadow_merge_check(stack, (ItemStack) (Object) this, cir);
+    @Inject(method = "areItemsEqual", at = @At("RETURN"), cancellable = true)
+    private static void check_EqualIgnoreDamage(ItemStack left, ItemStack right, CallbackInfoReturnable<Boolean> cir) {
+        Globals.shadow_merge_check(left, right, cir);
     }
 
-    @Inject(method = "isEqual", at = @At("RETURN"), cancellable = true)
-    private void check_Equal(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+    @Inject(method = "areEqual", at = @At("RETURN"), cancellable = true)
+    private static void check_Equal(ItemStack left, ItemStack right, CallbackInfoReturnable<Boolean> cir) {
         if (CarpetShadowSettings.shadowItemInventoryFragilityFix && cir.getReturnValue()) {
-            String shadow1 = ((ShadowItem) (Object) stack).getShadowId();
-            String shadow2 = ((ShadowItem) (Object) this).getShadowId();
+            String shadow1 = ((ShadowItem) (Object) left).getShadowId();
+            String shadow2 = ((ShadowItem) (Object) right).getShadowId();
             if (!Objects.equals(shadow1, shadow2)) {
                 cir.setReturnValue(false);
             }

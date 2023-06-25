@@ -11,11 +11,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.lang.ref.Reference;
-import java.lang.ref.WeakReference;
-
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
+
     @Inject(at = @At("HEAD"), method = "fromNbt", cancellable = true)
     private static void pre_fromNbt(NbtCompound nbt, CallbackInfoReturnable<ItemStack> cir) {
         if (CarpetShadowSettings.shadowItemMode.shouldLoadItem() && !CarpetShadowSettings.shadowItemMode.shouldResetCount() && nbt.contains("shadow")) {
@@ -40,8 +38,8 @@ public abstract class ItemStackMixin {
                 ItemStack reference = Globals.getByIdOrNull(shadow_id);
                 if (reference == null) {
                     ItemStack stack = cir.getReturnValue();
-                    CarpetShadow.shadowMap.put(shadow_id, new WeakReference<>(stack));
                     ((ShadowItem) (Object) stack).setShadowId(shadow_id);
+                    CarpetShadow.shadowMap.put(shadow_id, stack);
                     CarpetShadow.LOGGER.debug("Shadowed item loaded from memory");
                     CarpetShadow.LOGGER.debug("id: " + shadow_id);
                 }
@@ -56,10 +54,11 @@ public abstract class ItemStackMixin {
             ItemStack stack = ((ItemStack) (Object) this);
             String shadow_id = ((ShadowItem) (Object) stack).getShadowId();
             if (shadow_id != null) {
-                Reference<ItemStack> reference = CarpetShadow.shadowMap.get(shadow_id);
-                if (reference != null && reference.refersTo(stack)) {
+                ItemStack reference = CarpetShadow.shadowMap.getIfPresent(shadow_id);
+                if (reference == stack) {
                     if (stack.isEmpty()) {
-                        CarpetShadow.shadowMap.remove(shadow_id);
+                        CarpetShadow.shadowMap.invalidate(shadow_id);
+                        ((ShadowItem) (Object) stack).setShadowId(null);
                     } else {
                         ret.putString("shadow", shadow_id);
                         cir.setReturnValue(ret);

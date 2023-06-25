@@ -17,20 +17,15 @@ public class Globals {
     public static ItemStack getByIdOrNull(String shadow_id) {
         if(shadow_id == null)
             return null;
-        Reference<ItemStack> reference = CarpetShadow.shadowMap.get(shadow_id);
-        if (reference != null && !reference.refersTo(null)) {
-            return reference.get();
-        }
-        return null;
+        return CarpetShadow.shadowMap.getIfPresent(shadow_id);
     }
 
     public static ItemStack getByIdOrAdd(String shadow_id, ItemStack stack) {
-        Reference<ItemStack> reference = CarpetShadow.shadowMap.get(shadow_id);
-        if (reference != null && !reference.refersTo(null)) {
-            return reference.get();
-        }
-        CarpetShadow.shadowMap.put(shadow_id, new WeakReference<>(stack));
+        ItemStack reference = CarpetShadow.shadowMap.getIfPresent(shadow_id);
+        if (reference != null)
+            return reference;
         ((ShadowItem)(Object)stack).setShadowId(shadow_id);
+        CarpetShadow.shadowMap.put(shadow_id, stack);
         return stack;
     }
 

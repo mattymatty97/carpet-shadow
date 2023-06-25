@@ -24,9 +24,9 @@ public abstract class ItemStackMixin {
     @Inject(method = "getTooltip", at = @At("RETURN"))
     private void postToolTip(@Nullable PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> cir) {
         List<Text> list = cir.getReturnValue();
-        if (CarpetShadowSettings.shadowItemTooltip && ((ShadowItem) (Object) this).getShadowId() != null) {
+        if (CarpetShadowSettings.shadowItemTooltip && ((ShadowItem) this).getShadowId() != null) {
             MutableText text = MutableText.of(new LiteralTextContent("shadow_id: "));
-            MutableText sub = MutableText.of(new LiteralTextContent(((ShadowItem) (Object) this).getShadowId()));
+            MutableText sub = MutableText.of(new LiteralTextContent(((ShadowItem) this).getShadowId()));
             sub.formatted(Formatting.GOLD, Formatting.BOLD);
             text.append(sub);
             text.formatted(Formatting.ITALIC);

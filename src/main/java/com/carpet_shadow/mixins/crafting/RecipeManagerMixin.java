@@ -7,6 +7,7 @@ import com.carpet_shadow.interfaces.ShadowItem;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
 import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.inventory.RecipeInputInventory;
 import net.minecraft.item.*;
 import net.minecraft.recipe.*;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
@@ -32,7 +33,7 @@ public class RecipeManagerMixin {
         Identifier identifier = new Identifier("carpet_shadow","shadow_recipe");
         Recipe<?> recipe = new ShapelessRecipe(identifier, "shadow", CraftingRecipeCategory.MISC, ItemStack.EMPTY, DefaultedList.of()) {
             @Override
-            public boolean matches(CraftingInventory inventory, World world) {
+            public boolean matches(RecipeInputInventory inventory, World world) {
                 if (CarpetShadowSettings.shadowItemMode== CarpetShadowSettings.Mode.UNLINK || !CarpetShadowSettings.shadowCraftingGeneration)
                     return false;
 
@@ -50,7 +51,7 @@ public class RecipeManagerMixin {
             }
 
             @Override
-            public ItemStack craft(CraftingInventory inventory, DynamicRegistryManager registryManager) {
+            public ItemStack craft(RecipeInputInventory inventory, DynamicRegistryManager registryManager) {
                 if (CarpetShadowSettings.shadowItemMode== CarpetShadowSettings.Mode.UNLINK || !CarpetShadowSettings.shadowCraftingGeneration)
                     return ItemStack.EMPTY;
 
@@ -85,6 +86,10 @@ public class RecipeManagerMixin {
                 return width * height >= 2;
             }
 
+            @Override
+            public boolean isIgnoredInRecipeBook() {
+                return true;
+            }
         };
         ((ImmutableMap.Builder)map2.computeIfAbsent(recipe.getType(), recipeType -> ImmutableMap.builder())).put(identifier, recipe);
         builder.put(identifier, recipe);
