@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 public abstract class DropperBlockMixin {
 
     @Inject(method = "dispense", at=@At(value = "INVOKE", target = "Lnet/minecraft/block/entity/DispenserBlockEntity;setStack(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILEXCEPTION, cancellable = true)
-    void fix_dispense(ServerWorld world, BlockPos blockPos, CallbackInfo ci, BlockPointerImpl blockPointerImpl, DispenserBlockEntity dispenserBlockEntity, int i, ItemStack itemStack1, Direction facing, Inventory inventory, ItemStack itemStack2){
+    void fix_dispense(ServerWorld world, BlockPos pos, CallbackInfo ci, BlockPointerImpl blockPointerImpl, DispenserBlockEntity dispenserBlockEntity, int i, ItemStack itemStack1, /*Direction direction, Inventory inventory,*/ ItemStack itemStack2){
         if(CarpetShadowSettings.shadowItemTransferFragilityFix && ((ShadowItem)(Object)itemStack1).getShadowId() != null && itemStack1 != itemStack2){
             itemStack1.setCount(itemStack2.getCount());
             itemStack2 = itemStack1;
