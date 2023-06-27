@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(ItemStack.class)
 public class ItemStackMixin implements ShadowItem {
     private String shadow_id = null;
+    private String client_shadow_id = null;
 
     @Override
     public String getShadowId() {
@@ -17,6 +18,16 @@ public class ItemStackMixin implements ShadowItem {
     @Override
     public void setShadowId(String id) {
         shadow_id = id;
+        setClientShadowId(id);
     }
 
+    @Override
+    public String getClientShadowId() {
+        return client_shadow_id;
+    }
+
+    @Override
+    public void setClientShadowId(String client_shadow_id) {
+        this.client_shadow_id = client_shadow_id;
+    }
 }

@@ -2,6 +2,9 @@ package com.carpet_shadow.mixins.fragility;
 
 import com.carpet_shadow.CarpetShadowSettings;
 import com.carpet_shadow.interfaces.ShadowItem;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.block.DropperBlock;
 import net.minecraft.block.entity.DispenserBlockEntity;
 import net.minecraft.inventory.Inventory;
@@ -19,13 +22,14 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(DropperBlock.class)
 public abstract class DropperBlockMixin {
 
-    @Inject(method = "dispense", at=@At(value = "INVOKE", target = "Lnet/minecraft/block/entity/DispenserBlockEntity;setStack(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILEXCEPTION, cancellable = true)
-    void fix_dispense(ServerWorld world, BlockPos blockPos, CallbackInfo ci, BlockPointerImpl blockPointerImpl, DispenserBlockEntity dispenserBlockEntity, int i, ItemStack itemStack1, Direction facing, Inventory inventory, ItemStack itemStack2){
+    @WrapOperation(method = "dispense", at=@At(value = "INVOKE", target = "Lnet/minecraft/block/entity/DispenserBlockEntity;setStack(ILnet/minecraft/item/ItemStack;)V"))
+    void fix_dispense(DispenserBlockEntity dispenserBlockEntity, int slot, ItemStack stack, Operation<Void> original, @Local(ordinal = 0) ItemStack itemStack1, @Local(ordinal = 1) ItemStack itemStack2){
         if(CarpetShadowSettings.shadowItemTransferFragilityFix && ((ShadowItem)(Object)itemStack1).getShadowId() != null && itemStack1 != itemStack2){
             itemStack1.setCount(itemStack2.getCount());
             itemStack2 = itemStack1;
-            dispenserBlockEntity.setStack(i, itemStack2);
-            ci.cancel();
+            original.call(dispenserBlockEntity, slot, itemStack2);
+        }else{
+            original.call(dispenserBlockEntity, slot, stack);
         }
     }
 

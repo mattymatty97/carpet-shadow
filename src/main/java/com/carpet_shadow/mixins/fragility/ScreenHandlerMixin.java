@@ -4,7 +4,10 @@ import com.carpet_shadow.CarpetShadowSettings;
 import com.carpet_shadow.Globals;
 import com.carpet_shadow.interfaces.ShadowItem;
 import com.carpet_shadow.interfaces.ShifingItem;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
@@ -26,25 +29,25 @@ public abstract class ScreenHandlerMixin {
     @Shadow
     public abstract ItemStack getCursorStack();
 
-    @Redirect(method = "internalOnSlotClick", slice = @Slice(
+    @WrapOperation(method = "internalOnSlotClick", slice = @Slice(
             from = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;canTakeItems(Lnet/minecraft/entity/player/PlayerEntity;)Z", ordinal = 1)),
             at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;setCursorStack(Lnet/minecraft/item/ItemStack;)V", ordinal = 1)
     )
-    public void remove_shadow_stack(ScreenHandler instance, ItemStack stack) {
+    public void remove_shadow_stack(ScreenHandler instance, ItemStack stack, Operation<Void> original) {
         String shadowId1 = ((ShadowItem) (Object) getCursorStack()).getShadowId();
         String shadowId2 = ((ShadowItem) (Object) stack).getShadowId();
         if (CarpetShadowSettings.shadowItemInventoryFragilityFix && shadowId1 != null && shadowId1.equals(shadowId2)) {
             instance.setCursorStack(ItemStack.EMPTY);
         } else {
-            instance.setCursorStack(stack);
+            original.call(instance, stack);
         }
     }
 
-    @Redirect(method = "internalOnSlotClick", slice = @Slice(
+    @WrapOperation(method = "internalOnSlotClick", slice = @Slice(
             from = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;canTakeItems(Lnet/minecraft/entity/player/PlayerEntity;)Z")
     ),
             at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;quickMove(Lnet/minecraft/entity/player/PlayerEntity;I)Lnet/minecraft/item/ItemStack;"))
-    public ItemStack fix_shift(ScreenHandler instance, PlayerEntity player, int index) {
+    public ItemStack fix_shift(ScreenHandler instance, PlayerEntity player, int index, Operation<ItemStack> original) {
         if (CarpetShadowSettings.shadowItemInventoryFragilityFix) {
             Slot og = instance.slots.get(index);
             ItemStack og_item = og.getStack();
@@ -53,7 +56,7 @@ public abstract class ScreenHandlerMixin {
                 ((ShadowItem) (Object) mirror).setShadowId(((ShadowItem) (Object) og_item).getShadowId());
                 og.setStack(mirror);
                 ((ShifingItem)(Object)mirror).setShiftMoving(true);
-                ItemStack ret = instance.quickMove(player, index);
+                ItemStack ret = original.call(instance, player, index);
                 ((ShifingItem)(Object)mirror).setShiftMoving(false);
                 if (ret == ItemStack.EMPTY) {
                     og_item = Globals.getByIdOrAdd(((ShadowItem) (Object) og_item).getShadowId(), og_item);
@@ -63,14 +66,14 @@ public abstract class ScreenHandlerMixin {
                 return ret;
             }
         }
-        return instance.quickMove(player, index);
+        return original.call(instance, player, index);
     }
 
-    @Redirect(method = "insertItem", slice = @Slice(
+    @WrapOperation(method = "insertItem", slice = @Slice(
             from = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;getStack()Lnet/minecraft/item/ItemStack;", ordinal = 1)
     ),
             at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;split(I)Lnet/minecraft/item/ItemStack;", ordinal = 1))
-    public ItemStack fix_shift(ItemStack instance, int amount) {
+    public ItemStack fix_shift(ItemStack instance, int amount, Operation<ItemStack> original) {
         if (CarpetShadowSettings.shadowItemInventoryFragilityFix && ((ShadowItem) (Object) instance).getShadowId() != null) {
             String shadow_id = ((ShadowItem) (Object) instance).getShadowId();
             ItemStack og_item = Globals.getByIdOrNull(shadow_id);
@@ -80,25 +83,25 @@ public abstract class ScreenHandlerMixin {
                 return og_item;
             }
         }
-        return instance.split(amount);
+        return original.call(instance, amount);
     }
 
-    @Redirect(method = "insertItem",
+    @WrapOperation(method = "insertItem",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isEmpty()Z",ordinal = 0))
-    public boolean fix_shift2(ItemStack instance) {
+    public boolean fix_shift2(ItemStack instance, Operation<Boolean> original) {
         if (CarpetShadowSettings.shadowItemInventoryFragilityFix && ((ShifingItem) (Object) instance).isShiftMoving()) {
             return true;
         }
-        return instance.isEmpty();
+        return original.call(instance);
     }
 
-    @Redirect(method = "internalOnSlotClick",
+    @WrapOperation(method = "internalOnSlotClick",
             slice = @Slice(
                     from = @At(value = "INVOKE",target = "Lnet/minecraft/util/collection/DefaultedList;get(I)Ljava/lang/Object;"),
                     to = @At(value = "INVOKE",target = "Ljava/util/Set;add(Ljava/lang/Object;)Z")
             ),
             at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;canInsertItemIntoSlot(Lnet/minecraft/screen/slot/Slot;Lnet/minecraft/item/ItemStack;Z)Z"))
-    public boolean fixQuickCraft(Slot slot, ItemStack stack, boolean allowOverflow) {
+    public boolean fixQuickCraft(Slot slot, ItemStack stack, boolean allowOverflow, Operation<Boolean> original) {
         if (CarpetShadowSettings.shadowItemInventoryFragilityFix) {
             ItemStack slotStack = slot.getStack();
             ItemStack ref1 = Globals.getByIdOrNull(((ShadowItem) (Object) slotStack).getShadowId());
@@ -106,7 +109,7 @@ public abstract class ScreenHandlerMixin {
             if(slotStack == ref1 || stack == ref2)
                 return false;
         }
-        return canInsertItemIntoSlot(slot, stack, allowOverflow);
+        return original.call(slot, stack, allowOverflow);
     }
 
 }

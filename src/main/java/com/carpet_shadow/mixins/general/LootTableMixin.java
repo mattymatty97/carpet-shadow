@@ -1,6 +1,8 @@
 package com.carpet_shadow.mixins.general;
 
 import com.carpet_shadow.CarpetShadowSettings;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Share;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.context.LootContext;
@@ -14,10 +16,9 @@ import java.util.function.Consumer;
 
 @Mixin(LootTable.class)
 public class LootTableMixin {
-    @Inject(method = "processStacks", at=@At("RETURN"), cancellable = true)
-    private static void fix_survival_shulkers(ServerWorld world, Consumer<ItemStack> lootConsumer, CallbackInfoReturnable<Consumer<ItemStack>> cir) {
-        Consumer<ItemStack> consumer = cir.getReturnValue();
-        Consumer<ItemStack> ret = itemStack -> {
+    @ModifyReturnValue(method = "processStacks", at=@At("RETURN"))
+    private static Consumer<ItemStack> fix_survival_shulkers(Consumer<ItemStack> consumer, ServerWorld world, Consumer<ItemStack> lootConsumer) {
+        return itemStack -> {
             if (CarpetShadowSettings.shadowItemMode != CarpetShadowSettings.Mode.UNLINK &&
                     itemStack.getCount() == itemStack.getMaxCount()) {
                 lootConsumer.accept(itemStack);
@@ -25,6 +26,5 @@ public class LootTableMixin {
                 consumer.accept(itemStack);
             }
         };
-        cir.setReturnValue(ret);
     }
 }

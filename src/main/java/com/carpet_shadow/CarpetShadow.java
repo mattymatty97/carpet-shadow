@@ -8,6 +8,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.llamalad7.mixinextras.MixinExtrasBootstrap;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
@@ -26,6 +27,8 @@ public class CarpetShadow implements CarpetExtension, ModInitializer {
     public static final Logger LOGGER = LogManager.getLogger("carpet-shadow");
     public static RandomString shadow_id_generator = new RandomString(CarpetShadowSettings.shadowItemIdSize);
 
+
+
     @Override
     public void onGameStarted() {
         CarpetShadow.LOGGER.info("Carpet Shadow Loaded!");
@@ -35,6 +38,7 @@ public class CarpetShadow implements CarpetExtension, ModInitializer {
 
     @Override
     public void onInitialize() {
+        MixinExtrasBootstrap.init();
         CarpetServer.manageExtension(new CarpetShadow());
         CarpetShadow.LOGGER.info("Carpet Shadow Loading!");
     }

@@ -6,6 +6,7 @@ import com.carpet_shadow.Globals;
 import com.carpet_shadow.interfaces.ShadowItem;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.RecipeInputInventory;
 import net.minecraft.item.*;
@@ -28,10 +29,10 @@ import java.util.Map;
 @SuppressWarnings({"unchecked","rawtypes"})
 @Mixin(RecipeManager.class)
 public class RecipeManagerMixin {
-    @Inject(method = "apply(Ljava/util/Map;Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/util/profiler/Profiler;)V", at = @At(value = "INVOKE", target = "Ljava/util/Map;entrySet()Ljava/util/Set;", ordinal = 0, shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILHARD)
-    private void addShadowRecipe(Map<Identifier, JsonElement> map, ResourceManager resourceManager, Profiler profiler, CallbackInfo ci, Map map2, ImmutableMap.Builder<Identifier, Recipe<?>> builder){
+    @Inject(method = "apply(Ljava/util/Map;Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/util/profiler/Profiler;)V", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableMap;builder()Lcom/google/common/collect/ImmutableMap$Builder;", shift = At.Shift.BY, by=2))
+    private void addShadowRecipe(Map<Identifier, JsonElement> map, ResourceManager resourceManager, Profiler profiler, CallbackInfo ci, @Local(ordinal = 1) Map<RecipeType<?>, ImmutableMap.Builder<Identifier, Recipe<?>>> map2, @Local(ordinal = 0) ImmutableMap.Builder<Identifier, Recipe<?>> builder){
         Identifier identifier = new Identifier("carpet_shadow","shadow_recipe");
-        Recipe<?> recipe = new ShapelessRecipe(identifier, "shadow", CraftingRecipeCategory.MISC, ItemStack.EMPTY, DefaultedList.of()) {
+        Recipe<?> recipe = new BookCloningRecipe(identifier,  CraftingRecipeCategory.MISC) {
             @Override
             public boolean matches(RecipeInputInventory inventory, World world) {
                 if (CarpetShadowSettings.shadowItemMode== CarpetShadowSettings.Mode.UNLINK || !CarpetShadowSettings.shadowCraftingGeneration)
@@ -84,11 +85,6 @@ public class RecipeManagerMixin {
                 if (CarpetShadowSettings.shadowItemMode== CarpetShadowSettings.Mode.UNLINK || !CarpetShadowSettings.shadowCraftingGeneration)
                     return false;
                 return width * height >= 2;
-            }
-
-            @Override
-            public boolean isIgnoredInRecipeBook() {
-                return true;
             }
         };
         ((ImmutableMap.Builder)map2.computeIfAbsent(recipe.getType(), recipeType -> ImmutableMap.builder())).put(identifier, recipe);

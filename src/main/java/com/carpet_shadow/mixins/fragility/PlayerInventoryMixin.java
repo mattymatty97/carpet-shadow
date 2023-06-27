@@ -4,6 +4,8 @@ import com.carpet_shadow.CarpetShadowSettings;
 import com.carpet_shadow.Globals;
 import com.carpet_shadow.interfaces.ItemEntitySlot;
 import com.carpet_shadow.interfaces.ShadowItem;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -20,25 +22,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerInventory.class)
 public abstract class PlayerInventoryMixin {
-
-    @Shadow
-    @Final
-    public PlayerEntity player;
-    @Shadow
-    @Final
-    public DefaultedList<ItemStack> main;
-
-    @Shadow
-    protected abstract int addStack(ItemStack stack);
-
-    @Shadow
-    public abstract int getEmptySlot();
-
     @Shadow
     public abstract void setStack(int slot, ItemStack stack);
 
-    @Redirect(method = "insertStack(ILnet/minecraft/item/ItemStack;)Z", at=@At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;setCount(I)V"), slice = @Slice(from = @At(value = "FIELD",target = "Lnet/minecraft/entity/player/PlayerAbilities;creativeMode:Z")))
-    private void modify_count(ItemStack instance, int count){
+    @WrapOperation(method = "insertStack(ILnet/minecraft/item/ItemStack;)Z", at=@At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;setCount(I)V"), slice = @Slice(from = @At(value = "FIELD",target = "Lnet/minecraft/entity/player/PlayerAbilities;creativeMode:Z")))
+    private void modify_count(ItemStack instance, int count, Operation<Void> original){
         if(count==0 && CarpetShadowSettings.shadowItemInventoryFragilityFix && ((ShadowItem) (Object) instance).getShadowId() != null){
             ItemEntity entity = ((ItemEntitySlot) (Object) instance).getEntity();
             if (entity != null)
@@ -46,7 +34,7 @@ public abstract class PlayerInventoryMixin {
             else
                 instance.setCount(0);
         }else{
-            instance.setCount(count);
+            original.call(instance, count);
         }
     }
 

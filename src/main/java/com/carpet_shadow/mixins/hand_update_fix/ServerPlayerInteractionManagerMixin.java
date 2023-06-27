@@ -2,6 +2,8 @@ package com.carpet_shadow.mixins.hand_update_fix;
 
 import com.carpet_shadow.CarpetShadowSettings;
 import com.carpet_shadow.interfaces.ShadowItem;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerInventory;
@@ -27,16 +29,14 @@ public abstract class ServerPlayerInteractionManagerMixin {
 
     @Shadow public abstract boolean isCreative();
 
-    @Inject(method = "interactBlock", at = @At(value = "RETURN",shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILHARD)
-    private void inject_on_block_use(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir, BlockPos blockPos, BlockState blockState){
+    @Inject(method = "interactBlock", at = @At(value = "RETURN",shift = At.Shift.BEFORE))
+    private void inject_on_block_use(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir){
         if(CarpetShadowSettings.shadowItemUseFix && ((ShadowItem)(Object)stack).getShadowId() != null && !isCreative()) {
-            switch (cir.getReturnValue()) {
-                case SUCCESS, CONSUME -> {
-                    int index = (hand == Hand.OFF_HAND) ? PlayerInventory.OFF_HAND_SLOT : player.getInventory().selectedSlot;
-                    player.currentScreenHandler.getSlotIndex(player.getInventory(), index).ifPresent(i -> player.currentScreenHandler.setPreviousTrackedSlot(i, new ItemStack(Blocks.AIR)));
-                }
+            ActionResult result = cir.getReturnValue();
+            if (result==ActionResult.SUCCESS || result == ActionResult.CONSUME) {
+                int index = (hand == Hand.OFF_HAND) ? PlayerInventory.OFF_HAND_SLOT : player.getInventory().selectedSlot;
+                player.currentScreenHandler.getSlotIndex(player.getInventory(), index).ifPresent(i -> player.currentScreenHandler.setPreviousTrackedSlot(i, new ItemStack(Blocks.AIR)));
             }
         }
     }
-
 }
