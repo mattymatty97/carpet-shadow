@@ -31,6 +31,9 @@
   "entrypoints": {
     "main": [
       "com.carpet_shadow.CarpetShadow"
+    ],
+    "preLaunch": [
+      "com.llamalad7.mixinextras.MixinExtrasBootstrap::init"
     ]
   },
   "mixins": [
@@ -38,7 +41,7 @@
   ],
   "depends": {
     "carpet": ">=1.4.112",
-    "minecraft": "1.20.x"
+    "minecraft": "1.20.1+"
   },
   "custom": {
     "modmenu": {

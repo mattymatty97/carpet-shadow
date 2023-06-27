@@ -38,7 +38,6 @@ public class CarpetShadow implements CarpetExtension, ModInitializer {
 
     @Override
     public void onInitialize() {
-        MixinExtrasBootstrap.init();
         CarpetServer.manageExtension(new CarpetShadow());
         CarpetShadow.LOGGER.info("Carpet Shadow Loading!");
     }

@@ -8,6 +8,15 @@ version = project.mod_version + project.mod_suffix
 group = project.maven_group
 def buildnumber = 1
 
+sourceSets {
+    main {
+        java {
+            compileClasspath += main.compileClasspath
+            runtimeClasspath += main.compileClasspath
+        }
+    }
+}
+
 repositories {
     // Add repositories to retrieve artifacts from in here.
     // You should only use this when depending on other mods because
@@ -27,16 +36,16 @@ configurations {
 }
 
 dependencies {
-    implementation("com.github.LlamaLad7:MixinExtras:0.2.0-beta.8")
-    annotationProcessor("com.github.LlamaLad7:MixinExtras:0.2.0-beta.8")
     // To change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    modImplementation "carpet:fabric-carpet:${project.minecraft_version}-${project.carpet_core_version}"
+    modImplementation "carpet:fabric-carpet:${project.carpet_core_version}"
     implementation 'de.cronn:reflection-util:2.13.2'
     provided group: 'org.apache.commons', name: 'commons-collections4', version: 'latest.release'
+    provided(annotationProcessor("com.github.LlamaLad7:MixinExtras:${project.mixinextast_version}"))
+
 }
 
 
@@ -112,7 +121,7 @@ tasks.register("updateBuildNumber"){
     doLast {
         Properties props = new Properties()
 
-        File propsFile = new File("build-${project.minecraft_version}.properties")
+        File propsFile = new File("build.properties")
 
         try {
             props.load(propsFile.newDataInputStream())
