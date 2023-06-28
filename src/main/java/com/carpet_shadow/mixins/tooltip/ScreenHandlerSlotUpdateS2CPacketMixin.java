@@ -27,7 +27,7 @@ public abstract class ScreenHandlerSlotUpdateS2CPacketMixin {
     @ModifyReturnValue(method = "getItemStack", at = @At("RETURN"))
     public ItemStack getShadowStack(ItemStack ret){
         if (CarpetShadowSettings.shadowItemTooltip){
-            String id = ((ShadowItem)(Object)ret).getShadowId();
+            String id = ((ShadowItem)(Object)ret).getClientShadowId();
             ((ShadowItem)(Object)ret).setShadowId(null);
             ((ShadowItem)(Object)ret).setClientShadowId(id);
         }

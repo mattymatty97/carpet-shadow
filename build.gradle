@@ -44,7 +44,8 @@ dependencies {
     modImplementation "carpet:fabric-carpet:${project.carpet_core_version}"
     implementation 'de.cronn:reflection-util:2.13.2'
     provided group: 'org.apache.commons', name: 'commons-collections4', version: 'latest.release'
-    provided(annotationProcessor("com.github.LlamaLad7:MixinExtras:${project.mixinextast_version}"))
+    provided(annotationProcessor("com.github.LlamaLad7.mixinextras:mixinextras-fabric:${project.mixin_extras_fabric_version}"))
+    //provided(annotationProcessor("com.github.LlamaLad7:MixinExtras:${project.mixin_extras_version}"))
 
 }
 
@@ -102,18 +103,25 @@ jar {
 
 // configure the maven publication
 publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
+    if (System.getenv("CI")!=null){
+        publications {
+            maven(MavenPublication) {
+                groupId = this.getGroup()
+                artifactId = this.getName().toLowerCase()
+                version = System.getenv("GITHUB_REF_NAME")
+                from components.java
+            }
         }
-    }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-    repositories {
-        // Add repositories to publish to here.
-        // Notice: This block does NOT have the same function as the block in the top level.
-        // The repositories here will be used for publishing your artifact, not for
-        // retrieving dependencies.
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = "https://maven.pkg.github.com/"+System.getenv("GITHUB_REPOSITORY")
+                credentials {
+                    username = System.getenv("GITHUB_ACTOR")
+                    password = System.getenv("GITHUB_TOKEN")
+                }
+            }
+        }
     }
 }
 

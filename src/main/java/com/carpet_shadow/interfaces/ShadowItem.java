@@ -9,11 +9,13 @@ public interface ShadowItem {
     static ItemStack copy_redirect(ItemStack instance, Operation<ItemStack> original) {
         ItemStack stack = original.call(instance);
         ((ShadowItem) (Object) stack).setShadowId(((ShadowItem) (Object) instance).getShadowId());
+        ((ShadowItem) (Object) stack).setClientShadowId(((ShadowItem) (Object) instance).getClientShadowId());
         return stack;
     }
 
     static ItemStack copy_supplier(ItemStack instance, ItemStack copy) {
         ((ShadowItem) (Object) copy).setShadowId(((ShadowItem) (Object) instance).getShadowId());
+        ((ShadowItem) (Object) copy).setClientShadowId(((ShadowItem) (Object) instance).getClientShadowId());
         return copy;
     }
 
