@@ -7,21 +7,17 @@ import com.carpet_shadow.interfaces.ShadowItem;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.util.ClickType;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ScreenHandler.class)
 public abstract class ScreenHandlerMixin {
@@ -51,7 +47,7 @@ public abstract class ScreenHandlerMixin {
 
             if(shadow != null){
                 CarpetShadow.LOGGER.warn("New Shadow Item Created");
-                String shadow_id = ((ShadowItem) (Object) shadow).getShadowId();
+                String shadow_id = ((ShadowItem) (Object) shadow).carpet_shadow$getShadowId();
                 if (shadow_id == null)
                     shadow_id = CarpetShadow.shadow_id_generator.nextString();
                 Globals.getByIdOrAdd(shadow_id,shadow);
@@ -76,7 +72,7 @@ public abstract class ScreenHandlerMixin {
     }
 
     @Inject(method = "internalOnSlotClick",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerInventory;setStack(ILnet/minecraft/item/ItemStack;)V", shift = At.Shift.AFTER),
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;setStack(Lnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE),
             slice = @Slice(
                     from = @At(value = "FIELD", target = "Lnet/minecraft/screen/slot/SlotActionType;SWAP:Lnet/minecraft/screen/slot/SlotActionType;", opcode = Opcodes.GETSTATIC),
                     to = @At(value = "FIELD", target = "Lnet/minecraft/screen/slot/SlotActionType;CLONE:Lnet/minecraft/screen/slot/SlotActionType;", opcode = Opcodes.GETSTATIC))

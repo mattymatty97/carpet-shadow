@@ -45,29 +45,22 @@ public class CarpetShadowSettings {
     }
 
     public enum Mode{
-        UNLINK(false,false,false),
-        PERSIST(true,true,false),
-        VANISH(true,true,true);
+        UNLINK(false,false),
+        PERSIST(true,false),
+        VANISH(true,true);
 
         private final boolean shouldLoadItem;
-        private final boolean shouldWriteItem;
         private final boolean shouldResetCount;
 
         public boolean shouldLoadItem() {
             return shouldLoadItem;
         }
-
-        public boolean shouldWriteItem() {
-            return shouldWriteItem;
-        }
-
         public boolean shouldResetCount() {
             return shouldResetCount;
         }
 
-        Mode(boolean shouldLoadItem, boolean shouldWriteItem, boolean shouldResetCount) {
+        Mode(boolean shouldLoadItem, boolean shouldResetCount) {
             this.shouldLoadItem = shouldLoadItem;
-            this.shouldWriteItem = shouldWriteItem;
             this.shouldResetCount = shouldResetCount;
         }
     }

@@ -43,7 +43,7 @@ public class CarpetShadow implements CarpetExtension, ModInitializer {
     }
 
     @Override
-    public void onServerClosed(MinecraftServer server) {
+    public void onServerLoaded(MinecraftServer server) {
         shadowMap.invalidateAll();
     }
 

@@ -8,6 +8,7 @@
     "fragility.DropperBlockMixin",
     "fragility.HopperBlockEntityMixin",
     "fragility.ItemEntityMixin",
+    "fragility.ItemScattererMixin",
     "fragility.ItemStackMixin",
     "fragility.PlayerInventoryMixin",
     "fragility.ScreenHandlerMixin",

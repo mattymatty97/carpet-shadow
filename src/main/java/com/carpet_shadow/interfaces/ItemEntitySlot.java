@@ -4,8 +4,8 @@ import net.minecraft.entity.ItemEntity;
 
 public interface ItemEntitySlot {
 
-    ItemEntity getEntity();
+    ItemEntity carpet_shadow$getEntity();
 
-    void setEntity(ItemEntity entity);
+    void carpet_shadow$setEntity(ItemEntity entity);
 
 }

@@ -9,26 +9,26 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Objects;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin implements ItemEntitySlot, ShifingItem {
 
+    @Unique
     boolean shiftMoving = false;
+    @Unique
     private ItemEntity entity = null;
 
     @Override
-    public boolean isShiftMoving() {
+    public boolean carpet_shadow$isShiftMoving() {
         return shiftMoving;
     }
 
     @Override
-    public void setShiftMoving(boolean shiftMoving) {
+    public void carpet_shadow$setShiftMoving(boolean shiftMoving) {
         this.shiftMoving = shiftMoving;
     }
 
@@ -38,12 +38,12 @@ public abstract class ItemStackMixin implements ItemEntitySlot, ShifingItem {
     }
 
     @Override
-    public ItemEntity getEntity() {
+    public ItemEntity carpet_shadow$getEntity() {
         return entity;
     }
 
     @Override
-    public void setEntity(ItemEntity entity) {
+    public void carpet_shadow$setEntity(ItemEntity entity) {
         this.entity = entity;
     }
 
@@ -55,8 +55,8 @@ public abstract class ItemStackMixin implements ItemEntitySlot, ShifingItem {
     @ModifyReturnValue(method = "areEqual", at = @At("RETURN"))
     private static boolean check_Equal(boolean original, ItemStack left, ItemStack right) {
         if (CarpetShadowSettings.shadowItemInventoryFragilityFix && original) {
-            String shadow1 = ((ShadowItem) (Object) left).getShadowId();
-            String shadow2 = ((ShadowItem) (Object) right).getShadowId();
+            String shadow1 = ((ShadowItem) (Object) left).carpet_shadow$getShadowId();
+            String shadow2 = ((ShadowItem) (Object) right).carpet_shadow$getShadowId();
             if (!Objects.equals(shadow1, shadow2)) {
                 return false;
             }

@@ -70,7 +70,7 @@ public class RecipeManagerMixin {
                 if (item.getItem().equals(Items.ENDER_CHEST) && item.getCount()==1){
                     item = enderchest;
                 }
-                String id = ((ShadowItem)(Object)item).getShadowId();
+                String id = ((ShadowItem)(Object)item).carpet_shadow$getShadowId();
                 if (id == null){
                     id = CarpetShadow.shadow_id_generator.nextString();
                 }

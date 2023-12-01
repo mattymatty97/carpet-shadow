@@ -24,7 +24,7 @@ public abstract class ServerPlayerInteractionManagerMixin {
 
     @Inject(method = "interactBlock", at = @At(value = "RETURN",shift = At.Shift.BEFORE))
     private void inject_on_block_use(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir){
-        if(CarpetShadowSettings.shadowItemUseFix && ((ShadowItem)(Object)stack).getShadowId() != null && !isCreative()) {
+        if(CarpetShadowSettings.shadowItemUseFix && ((ShadowItem)(Object)stack).carpet_shadow$getShadowId() != null && !isCreative()) {
             ActionResult result = cir.getReturnValue();
             if (result==ActionResult.SUCCESS || result == ActionResult.CONSUME) {
                 int index = (hand == Hand.OFF_HAND) ? PlayerInventory.OFF_HAND_SLOT : player.getInventory().selectedSlot;

@@ -23,8 +23,8 @@ public abstract class BlockEntityMixin {
             try {
                 for (int index = 0; index < inv.size(); index++) {
                     ItemStack stack = inv.getStack(index);
-                    if (((ShadowItem) (Object) stack).getShadowId() != null) {
-                        ((InventoryItem) (Object) stack).addSlot(inv, index);
+                    if (((ShadowItem) (Object) stack).carpet_shadow$getShadowId() != null) {
+                        ((InventoryItem) (Object) stack).carpet_shadow$addSlot(inv, index);
                     }
                 }
             }catch(Exception ignored){}
