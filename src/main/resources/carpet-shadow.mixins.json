@@ -16,7 +16,6 @@
     "general.ItemStackMixin",
     "general.LootTableMixin",
     "general.ScreenHandlerMixin",
-    "general.SlotMixin",
     "hand_update_fix.ServerPlayerInteractionManagerMixin",
     "inv_updates.ItemStackMixin",
     "inv_updates.MinecraftServerMixin",

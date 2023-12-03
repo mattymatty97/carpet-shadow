@@ -10,22 +10,29 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.screen.slot.SlotActionType;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Slice;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ScreenHandler.class)
 public abstract class ScreenHandlerMixin {
-
-    @Shadow
-    public static boolean canInsertItemIntoSlot(@Nullable Slot slot, ItemStack stack, boolean allowOverflow) {
-        return false;
-    }
-
     @Shadow
     public abstract ItemStack getCursorStack();
+
+    @Inject(method = "internalOnSlotClick", at = @At("HEAD"))
+    public void merging_start(int slotIndex, int button, SlotActionType actionType, PlayerEntity player, CallbackInfo ci){
+        Globals.mergingThreads.add(Thread.currentThread());
+    }
+
+    @Inject(method = "internalOnSlotClick", at = @At("RETURN"))
+    public void merging_end(int slotIndex, int button, SlotActionType actionType, PlayerEntity player, CallbackInfo ci){
+        Globals.mergingThreads.remove(Thread.currentThread());
+    }
 
     @WrapOperation(method = "internalOnSlotClick", slice = @Slice(
             from = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;canTakeItems(Lnet/minecraft/entity/player/PlayerEntity;)Z", ordinal = 1)),

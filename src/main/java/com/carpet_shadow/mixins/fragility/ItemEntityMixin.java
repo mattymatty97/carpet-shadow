@@ -8,6 +8,8 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -29,7 +31,10 @@ public abstract class ItemEntityMixin {
 
     @ModifyReturnValue(method = "canMerge(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Z", at = @At("RETURN"))
     private static boolean canMerge(boolean original, ItemStack stack1, ItemStack stack2) {
-        return Globals.shadow_merge_check(stack1, stack2, original);
+        Globals.mergingThreads.add(Thread.currentThread());
+        boolean ret = Globals.shadow_merge_check(stack1, stack2, original);
+        Globals.mergingThreads.remove(Thread.currentThread());
+        return ret;
     }
 
     @Inject(method = "onPlayerCollision", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ItemEntity;getStack()Lnet/minecraft/item/ItemStack;", shift = At.Shift.BY, by = 2))
@@ -40,6 +45,15 @@ public abstract class ItemEntityMixin {
     @Inject(method = "onPlayerCollision", at = @At(value = "RETURN"))
     public void resetEntityForStack(PlayerEntity player, CallbackInfo ci, @Local(ordinal = 0) ItemStack stack) {
         ((ItemEntitySlot) (Object) stack).carpet_shadow$setEntity(null);
+    }
+
+    @Inject(method = "onPlayerCollision", at = @At("HEAD"))
+    private void merging_start(PlayerEntity player, CallbackInfo ci){
+        Globals.mergingThreads.add(Thread.currentThread());
+    }
+    @Inject(method = "onPlayerCollision", at = @At("RETURN"))
+    private void merging_end(PlayerEntity player, CallbackInfo ci){
+        Globals.mergingThreads.remove(Thread.currentThread());
     }
 
 }

@@ -6,6 +6,8 @@ import com.carpet_shadow.interfaces.ItemEntitySlot;
 import com.carpet_shadow.interfaces.ShadowItem;
 import com.carpet_shadow.interfaces.ShifingItem;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;

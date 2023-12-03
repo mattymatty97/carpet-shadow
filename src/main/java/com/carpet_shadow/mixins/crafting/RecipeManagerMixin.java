@@ -14,6 +14,7 @@ import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -40,7 +41,7 @@ public class RecipeManagerMixin {
                 for(int i = 0; i < inventory.size(); ++i) {
                     ItemStack itemStack2 = inventory.getStack(i);
                     if (!itemStack2.isEmpty()) {
-                        if (itemStack2.getItem().equals(Items.ENDER_CHEST) && itemStack2.getCount() == 1)
+                        if (itemStack2.getItem().equals(Items.ENDER_CHEST))
                             enderchest = true;
                         count++;
                     }
@@ -58,23 +59,44 @@ public class RecipeManagerMixin {
                 for(int i = 0; i < inventory.size(); ++i) {
                     ItemStack itemStack2 = inventory.getStack(i);
                     if (!itemStack2.isEmpty()) {
-                        if (itemStack2.getItem().equals(Items.ENDER_CHEST)  && itemStack2.getCount() == 1 && enderchest == null)
+                        if (itemStack2.getItem().equals(Items.ENDER_CHEST)) {
+                            if (enderchest != null)
+                                item = enderchest;
                             enderchest = itemStack2;
-                        else
+                        }else
                             item = itemStack2;
                     }
                 }
                 if (item==null || enderchest==null)
                     return ItemStack.EMPTY;
 
-                if (item.getItem().equals(Items.ENDER_CHEST) && item.getCount()==1){
-                    item = enderchest;
-                }
                 String id = ((ShadowItem)(Object)item).carpet_shadow$getShadowId();
                 if (id == null){
                     id = CarpetShadow.shadow_id_generator.nextString();
                 }
                 return Globals.getByIdOrAdd(id, item);
+            }
+
+            @Override
+            public DefaultedList<ItemStack> getRemainder(RecipeInputInventory inventory) {
+                ItemStack item = null;
+                ItemStack enderchest = null;
+                for(int i = 0; i < inventory.size(); ++i) {
+                    ItemStack itemStack2 = inventory.getStack(i);
+                    if (!itemStack2.isEmpty()) {
+                        if (itemStack2.getItem().equals(Items.ENDER_CHEST)) {
+                            if (enderchest != null)
+                                item = enderchest;
+                            enderchest = itemStack2;
+                        }else
+                            item = itemStack2;
+                    }
+                }
+
+                if (item != null && enderchest != null)
+                    item.setCount(item.getCount() + 1);
+
+                return super.getRemainder(inventory);
             }
 
             @Override
